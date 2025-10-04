@@ -1,0 +1,162 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts}
+
+\usepackage{array}
+% \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% inlined bib file
+\usepackage{filecontents}
+
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{subfigure}
+
+\usepackage[normalem]{ulem}
+\usepackage{algorithmicx}
+\usepackage[ruled]{algorithm}
+%\usepackage[noend]{algpseudocode}
+\usepackage{algpseudocode}
+\usepackage[normalem]{ulem}  
+
+% \usepackage{url}
+% \def\UrlBreaks{\do\/\do-}
+\usepackage{breakurl}
+%\usepackage[breaklinks]{hyperref}
+
+% to be able to draw some self-contained figs
+% inlined bib file
+\usepackage{epstopdf}
+\epstopdfsetup{update}
+\usepackage{rotating}
+\usepackage{cleveref}
+\usepackage{adjustbox}
+\usepackage{comment}
+\usepackage{pifont}
+\usepackage{caption}
+\usepackage{framed}
+\usepackage{authblk}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{cite}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+% updated with editorial comments 8/9/2021
+
+\newcommand{\pname}[1]{SPEC{#1}}
+
+% three method names
+\newcommand{\techa}{similarity-guided important token identification}
+%\newcommand{\techaa}{similarity threshold decay}
+%\newcommand{\techb}{hybrid granularity KV management}
+%\newcommand{\techba}{chunk-based KV storage and reordering}
+%\newcommand{\techbb}{token-based cache management}
+\newcommand{\techb}{importance-informed KV management}
+\newcommand{\techba}{KV reordering}
+\newcommand{\techbb}{score-based cache management}
+
+\newcommand{\techA}{Similarity-Guided Important Token Identification}
+%\newcommand{\techAa}{Similarity Threshold Decay}
+%\newcommand{\techB}{Hybrid Granularity KV Management}
+%\newcommand{\techBa}{Chunk-Based KV Storage and Reordering}
+%\newcommand{\techBb}{Token-Based Cache Management}
+\newcommand{\techB}{Importance-Informed KV Management}
+\newcommand{\techBa}{KV Reordering}
+\newcommand{\techBb}{Score-Based Cache Management}
+%\newcommand{\technew}{similarity-guided layer-ahead speculative prefetching}
+\newcommand{\techNew}{Layer-Aware Speculative Prefetching}
+\newcommand{\technew}{layer-aware speculative prefetching}
+
+\newcommand{\wj}[1]{\textcolor{black}{#1}}
+\newcommand{\xz}[1]{\textcolor{red}{#1}}
+\newcommand{\he}[1]{\textcolor{blue}{#1}}
+\newcommand{\ysl}[1]{\textcolor{black}{#1}}
+\newcommand{\fv}[1]{\textcolor{black}{#1}}
+\newcommand{\fvc}[1]{\textcolor{black}{#1}}
+\newcommand{\zrd}[1]{\textcolor{blue}{#1}}
+\newcommand{\zrdnew}[1]{\textcolor{red}{#1}}
+
+\graphicspath{{./fig/}}
+\begin{document}
+        % <-this % stops a space
+
+
+% The paper headers
+\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
+{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+
+% \IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+
+%-------------------------------------------------------------------------------
+
+%don't want date printed
+\date{}
+
+% make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+%\title{\pname{}: Exploring Data Locality in Micrographs for Accelerating \\ Distributed GNN Training}
+%\title{\pname{}: Feature-Centered Micrograph-Based Framework for Accelerating Distributed GNN Training}
+\title{\Large \bf \pname{}: Importance-Informed Prefix-KV Caching and Speculative Prefetching for Large Language Model Inference}
+
+% %for single author (just remove % characters)
+% \author{
+	% {\rm Your N.\ Here}\\
+	% Your Institution
+	% \and
+	% {\rm Second Name}\\
+	% Second Institution
+	% % copy the following lines to add more authors
+	% % \and
+	% % {\rm Name}\\
+	% %Name Institution
+	% } % end author
+
+
+\maketitle
+\pagestyle{empty}
+
+\input{tex/abstract}
+\input{tex/introduction}
+\input{tex/background}
+\input{tex/motivation}
+\input{tex/design}
+\input{tex/implementation}
+\input{tex/eval}
+\input{tex/related}
+%\input{tex/discussion}
+\input{tex/conclusion}
+
+
+%-------------------------------------------------------------------------------
+% \section*{Acknowledgments}
+% %-------------------------------------------------------------------------------
+
+% The USENIX latex style is old and very tired, which is why
+% there's no \textbackslash{}acks command for you to use when
+% acknowledging. Sorry.
+
+% %-------------------------------------------------------------------------------
+% \section*{Availability}
+% %-------------------------------------------------------------------------------
+
+% USENIX program committees give extra points to submissions that are
+% backed by artifacts that are publicly available. If you made your code
+% or data available, it's worth mentioning this fact in a dedicated
+% section.
+
+%-------------------------------------------------------------------------------
+\bibliographystyle{plain}
+\bibliography{./bib/references}
+
+
+
+
+\end{document}
+
+

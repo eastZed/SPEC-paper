@@ -1,0 +1,74 @@
+#! /usr/bin/env python
+
+from zplot import *
+
+# 定义字体大小
+xlabelTextSize = 16
+ylabelTextSize = 16
+xtitleTextSize = 16
+ytitleTextSize = 16
+
+legendTextSize = 16
+legendSize = 10
+legendSkip = 70
+
+# 定义绘画区域大小、线条粗细、轴样式
+dimension = [240, 180]
+lineWidth = 2
+axisstyle = 'box'
+axisticstyle = 'in'
+
+# 定义生成文件名、来源数据文件名
+filename = 'grained_hitrate'
+dataname1 = 'grained_hitrate.data'
+
+# 创建整个画布
+ctype = 'pdf' if len(sys.argv) < 2 else sys.argv[1]
+c = canvas(ctype, title=filename, dimensions=[300, 300])
+
+# 读取源数据table
+t = table(file=dataname1)
+
+# 创建绘画框区域，定义横纵坐标轴的逻辑范围
+d = drawable(canvas=c, dimensions=dimension, coord=[50,50],
+            xrange=[-0.6, t.getmax('rownumber')+0.6], yrange=[0, 100])
+
+# 绘画边框和xy轴的文字
+axis(drawable=d, style=axisstyle, ticstyle=axisticstyle,
+         doxmajortics=False, doymajortics=True,
+         xminorticcnt=0, doxminortics=False, yminorticcnt=0,
+         # xtitle='Workload',
+         ytitle='Hit rate (%)', doylabels=True, ytitleshift=[0,0],
+         # linewidth=0.8,
+         linewidth=lineWidth,
+         xaxisposition=0, yauto=['','', 25], xlabelrotate=0,
+         xlabelshift=[0, -2.5],
+         xlabelfontsize=xlabelTextSize,
+         ylabelfontsize=ylabelTextSize,
+         xtitlesize=xtitleTextSize,
+         ytitlesize=ytitleTextSize,
+         xmanual=[['10', 0], ['20', 1], ['30', 2],['40',3],['50',4],['60',5]])
+
+p = plotter() # 画笔
+L = legend() # 图例
+
+
+series_list = ['token','chunk','prefix']
+fillcolors    = ['lightblue', 'lightsalmon', 'wheat',  'lightgrey']
+legend_names = ['token','chunk','prefix']
+
+
+               
+shiftx=[0, 0,0,0]
+stylelst = ['circle', 'circle','triangle','triangle']
+pointscolor = ['dodgerblue', 'lightsalmon','red','black']
+for i in range(len(series_list)):
+     p.points(drawable=d, table=t, xfield='rownumber', yfield=series_list[i], shift=[shiftx[i], 0], linecolor=pointscolor[i], size=6, legend=L, legendtext = legend_names[i], style=stylelst[i], fill=True, fillcolor=pointscolor[i])
+     p.line(drawable=d, table=t, xfield='rownumber', yfield=series_list[i], linecolor=pointscolor[i], linewidth=3)
+
+#### legend
+L.draw(canvas=c, coord=[d.left()+40, d.top()+10], skipnext=1, 
+     skipspace=legendSkip,hspace=4, fontsize=legendTextSize,  
+     width=legendSize, height=legendSize)
+
+c.render()

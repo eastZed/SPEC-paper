@@ -1,0 +1,16 @@
+\section{Implementation}
+\label{impl}
+%We implemented \pname{} based on the modern offloading-based LLM inference framework, FlexGen~\cite{flexgen-icml23}.
+%（为什么选择这个框架？重用它的 xxx 模块）
+%我们识别出探测头中重要KVusing mha 函数产生的 attention weights矩阵基于 H2O 方法 。然后基于 4.3 的方法决定加载剩下头中预测的重要 KV 还是全部KV。
+%For KV reordering,  我们实现 xxx；To implement dual score-based cache management, 我们实现 xxx
+\fv{
+%We implemented \pname{} on top of FlexGen~\cite{flexgen-icml23}, a modern offloading-based LLM inference framework.
+%We chose it because it provides a white-box implementation of models, which facilitates the integration of our I/O-efficient KV identification method. 
+%Specifically, we modified the \textit{mha} function to support prefix reuse and accumulated the values in each column of the \textit{attn\_weight} matrices to evaluate the importance of each KV pair.
+%We implement \pname{} on top of FlexGen~\cite{flexgen-icml23}, chosen for its white-box model implementation that aids integrating our I/O-efficient KV identification method.
+We chose to implement \pname{} on top of FlexGen~\cite{flexgen-icml23} because its white-box model implementation facilitates the development of our I/O-efficient KV identification method.
+ Specifically, we modified the \textit{mha} function for prefix reuse and used values in \textit{attn\_weight} to assess KV importance.
+For KV reordering, we implemented the \textit{PrefixKVLayer} class to store reordered KVs and mapping lists per layer. 
+For cache management, we developed the \textit{TokenCache} class with our score-based policy.
+}

@@ -1,0 +1,25 @@
+\begin{abstract}
+
+Modern advanced large language model (LLM) applications often prepend long
+contexts before user queries to improve model output quality.
+% , utilizing techniques like RAG and system prompts. 
+These contexts frequently repeat, either partially or fully, across multiple queries. Existing systems typically store and reuse the keys and values of these contexts (referred to as prefix KVs) to reduce redundant computation and time to first token (TTFT). 
+When prefix KVs need to be stored on disks due to insufficient CPU memory,
+reusing them does not always reduce TTFT, as disk I/O latency is high.
+% We propose loading only important prefix KVs to reduce I/O latency. 
+% However, simply applying existing important KV identification algorithms is suboptimal, as the reduction in I/O overhead is limited and storage and cache management remain inefficient.
+%In this paper, we propose \pname{}, an importance-informed multi-tier prefix KV
+%storage \zrd{and prefetching} system to reduce I/O delay for LLM inference by only loading important prefix KVs. 
+% To make it truly effective,
+% \pname{} first leverages the insight that there is significant similarity in important
+%token index sets across attention heads and 
+%\zrd{First, \pname{}}
+%introduces an I/O-efficient important KV identification algorithm. It then
+%optimizes prefix KV storage and caching through \techb{}, reducing TTFT during
+%model inference. 
+\zrd{In this paper, we present \pname{}, an importance-informed multi-tier prefix KV caching and speculative prefetching system designed to reduce TTFT in LLM inference. \pname{} first employs an I/O-efficient algorithm to identify and load only the most important KVs, thereby minimizing I/O overhead. Leveraging the observed similarity of important token index sets across adjacent transformer layers, it further introduces a speculative prefetching mechanism to hide I/O latency along the critical inference path. Finally, Spec optimizes prefix KV storage and cache utilization through importance-informed KV management, achieving additional reductions in TTFT for end-to-end inference.}
+Our experimental results show that \pname{} can reduce TTFT by
+up to \zrd{?}$\times$ compared to state-of-the-art systems, while maintaining
+comparable inference accuracy.
+	
+\end{abstract}

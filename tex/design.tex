@@ -1,0 +1,149 @@
+\section{\pname{} Design}
+\label{design_mainpart}
+
+\zrdnew{In this section, we present \pname{}, an importance-informed three-tier prefix KV \zrd{caching and prefetching }system. }
+%We first introduce the system overview of SPEC and then elaborate on its three key components.}
+First, we describe the overall architecture of \pname{} (\cref{sec:overview}). 
+\zrdnew{Then, we introduce an I/O-efficient technique to identify important tokens (\cref{sec:techa}). 
+Furthermore, we propose a speculative prefetching technique to mitigate I/O bottlenecks by overlapping computation and I/O ({\cref{sec:technew}})}.
+Finally, we explain how prefix KVs are managed across three storage tiers 
+to further reduce the latency when loading them into GPU memory (\cref{sec:techb}).
+
+\subsection{Overview}
+\label{sec:overview}
+
+
+
+
+We propose \pname{} to provide large storage capacity for prefix KVs while
+ensuring efficient I/O accesses to reduce TTFT. The system is designed based on
+two principles: (1) Using a minimal number of I/Os to identify the
+important KVs within a prefix, allowing only the essential KVs to be loaded
+during the prefill phase; (2) Since loading only important KVs could degrade
+the efficiency of existing storage and caching systems, we optimize the
+three-tier prefix KV management to improve cache hit
+ratios and I/O efficiency.
+
+Figure~\ref{fig:overview} presents the overall architecture of \pname{}. 
+% It consists of a data plane and two control components.
+In the data plane, all prefix KVs are stored on disks in chunks, with some
+prefix KVs cached in either CPU memory or GPU memory. The data in the two cache
+spaces are exclusive to avoid space wastage. The metadata in the CPU memory is
+organized using a radix tree~\cite{sglang-arxiv23}, which facilitates quick
+searches for the reusable prefix KVs.
+% \ysl{to find which prefix KVs can be reused and to locate them}.
+The runtime
+space stores model parameters and intermediate data needed for GPU
+inference.
+\pname{} has two control components including important token identification (ITF) (\cref{sec:techa}) and 
+prefix KV management (PKM) (\cref{sec:techb}).  ITF identifies important tokens within a chunk by loading 
+only partial keys rather than all of them, reducing the amount of data loaded from disks. 
+PKM manages the storage and data movement of prefix KVs across disks and the two cache spaces in CPU and GPU memory.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=3.3in]{overview.pdf}
+	\caption{Overview of the \pname{} system.}
+	\label{fig:overview}
+	\vspace{-0.2in}
+\end{figure}
+
+
+\noindent \textbf{Dataflow of \pname{}.} 
+Assume that a request $S=[t^p_0, t^p_1,...,t^p_{m-1}, t^q_0, t^q_1,...,t^q_{n-1}]$ arrives.
+$m$ is the number of tokens in prefix and $n$ is the number of tokens in the query.
+$t^p$ and $t^q$ denote the prefix and non-prefix tokens respectively. 
+First, given the request, \pname{} searches the radix tree to find the longest common 
+prefix subsequence from all previous requests~\cite{sglang-arxiv23, chunkattention-arxiv24}. 
+Let's assume the result is  
+%$R=[t^p_{i}, t^p_{i+1}, ..., t^p_j]$, whose KVs are 
+$R=[t^p_0, t^p_1, ..., t^p_j]$, whose KVs are
+stored in GPU memory, CPU memory, or disk.
+There may also be some prefix tokens \( NR = [t^p_{j+1}, ..., t^p_{m-1}] \) that are not in the radix tree, and therefore their KVs do not exist in the system.
+Next, \pname{} employs the I/O-efficient ITF method to identify 
+the important tokens within $R$ , assuming $R_{important}=[t^p_{t}, t^p_{t+1}, ..., t^p_s]$ 
+%($ i \leq t \leq s \leq j$) is identified. 
+($ 0 \leq t \leq s \leq j$) is identified.
+If KVs in $R_{important}$ are not in GPU memory, they are loaded from disk or CPU memory. 
+The KVs of unimportant tokens in $R$ are not reused and do not participate in further inference.
+Then, the loaded $R_{important}$, the tokens $NR$, and the tokens $[t^q_0, t^q_1,...,t^q_{n-1}]$   
+are sent into LLM model, completing the remaining computations in the prefill phase.
+Essentially, $R_{important}$ plus $NR$ becomes the defacto prefix used in the LLM inference,
+replacing the set of \{$t^p$\} in $S$.
+%Finally, the newly generated KVs for the prefix token in $R_{important}$ are stored on disk, 
+%and the prefix tokens in $R_{important}$ are inserted into the radix tree for future reuse by other requests. 
+Finally, the newly generated KVs for the prefix token in $NR$ are stored on disk, 
+and the prefix tokens in $NR$ are inserted into the radix tree for future reuse by other requests. 
+The decoding phase remains unchanged, following existing systems~\cite{alluneed-nips17}.
+
+% \wj{
+\noindent \textbf{Importance metric.} 
+In this paper, we use the sum of values
+in each column of the attention weight matrix as the token's importance,
+following the same method in H2O~\cite{h2o-nips23}. A higher sum indicates greater
+token importance. Our system is also compatible with other metrics for measuring
+token importance~\cite{scissorhands-nips23, flexgen-icml23, infinigen-osdi24}.
+% }
+
+%\pname{} uses a radix-tree~\cite{sglang-arxiv23} 
+%to manage the mapping from a token ID to its location.
+%When a user request arrives, it searches the radix tree
+%to identify its prefixes shared with previous requests. 
+%For each token in the prefix, we design different
+%dataflows depending on whether the token
+%is an important token. 
+%(1) If a token is an important token and exists
+%in the radix-tree, its prefix KV will be moved
+%to GPU if it does not exist in GPU.
+%(2) If a token is an important token but does not
+%exist in the radix-tree, its prefix KV will be
+%generated through the prefill computation and decoding
+%(illustrated in Section 2.1). After that, it is moved to GPU.
+%(3) If a token is not an important token, \pname{}
+%will substitue its KV with the KV of one important token 
+%identified by ITF in the subsequent inference to
+%reduce the amount of data for loading/generating 
+%prefix KVs.
+
+%\wj{
+%When a user request arrives, it searches the radix tree 
+%to identify its shared prefixes with previous requests. 
+%For each token in the prefix, we design different 
+%dataflows depending on whether the token is shared.
+%(1) If a token is not shared, its prefix KV will be 
+%generated through the prefill computation (illustrated in \cref{sec:llm-basic}). 
+%Afterward, the token is inserted into the radix tree, 
+%and its prefix KV is stored on disk for future reuse by other requests.
+%(2) If a token is shared, it will be evaluated by the ITF 
+%to determine if it is an important token. 
+%If it is important and its prefix KV is not in GPU memory, 
+%the prefix KV will be fetched to the GPU for subsequent inference computation. 
+%If it is not important, its prefix KV will be not used for current request's computations.
+%}
+
+
+%(1) If the token ID does not exist in the radix-tree,
+%indicating no shared prefix is found, \pname{} will
+%insert the token into the radix-tree, perform a complete 
+%prefill computation, split the computed prefix KVs into fixed chunks, 
+%and stores them on disks. The stored prefix KVs are periodically 
+%reordered and the relevant metadata are updated. 
+%(2) If the token is found in the radix-tree,
+%\pname{} will identify the location of important prefix KVs 
+%in the multi-tier storage and move them to GPUs for
+%further inference.
+%(3) If a subset of tokens are found in radix-tree, indicating
+%the current request has a partially shared prefix with
+%previous requests, the system will first identify important
+%KVs shared among the heads for the current query through ITF.
+%Then, for the important KVs exist in the storage, they
+%will be moved to GPU. For the remaining, they will be generated
+%through prefill computation, along with all subsequent decoding phases 
+%in GPUs. The prefix KVs including the newly generated KVs will be either 
+%cached in GPU or CPU memory, or discarded (with a copy always retained on 
+%disks). Their corresponding metadata are updated accordingly.
+
+\input{tex/design1}
+\input{tex/design_new}
+\input{tex/design2}
+

@@ -1,0 +1,118 @@
+\section{Introduction}
+\label{intro}
+
+\IEEEPARstart{G}{enerative} large language models (LLMs), such as ChatGPT and GPT-4, are increasingly utilized in applications like chatbots~\cite{chatgpt-23, chatbotmed-23}, document summarization~\cite{summarization-23, summarization2-22}, and translation~\cite{gpt4trans-23, goodgpttrans-23} due to their powerful understanding and generation capabilities. To generate more relevant and high-quality responses, these applications often prepend context-rich prefixes to user queries before sending the entire request to the model for inference. These prefixes may include the latest news retrieved from web searches relevant to the queries~\cite{rag-nips20}, historical conversation with the user~\cite{attentionstore-atc24}, and examples of question-answer pairs~\cite{chameleon-nips23} to guide the model's output format.
+
+While longer requests enhance the quality of the model's output, they also
+significantly increase response-generation latency, particularly the time to
+first token (TTFT). This occurs because the computational complexity of
+processing a request grows superlinearly with its length~\cite{alluneed-nips17}.
+% This poses challenges to user experience, especially in applications like
+% chatbots, where TTFT is critical. 
+Such an increase can negatively impact user experience, particularly in real-time applications like chatbots where a quick TTFT is essential.
+%Additionally, prolonged TTFT can increase the time per output token (TPOT) for other requests in modern systems that employ continuous batching.
+
+% Fortunately, existing systems have shown that different requests often share a
+% significant number of identical prefixes (i.e., consecutive tokens that are the
+% same from the beginning of the requests). By storing and reusing the keys (K)
+% and values (V) of these redundant prefixes (referred to as prefix KVs), TTFT can
+% be reduced, avoiding the need for recomputation. However, most existing systems
+% store prefix KV only in GPU and/or CPU memory~\cite{promptcache-mlsys24,
+% sglang-arxiv23, ragcache-arxiv24, chunkattention-arxiv24}, which quickly becomes
+% exhausted for long sequence lengths or large batch sizes, limiting the reduction of TTFT. The latest work,
+% AttentionStore~\cite{attentionstore-atc24}, extends prefix KV storage to local
+% disks and preloads it from disk to CPU memory for upcoming requests, as informed
+% by the scheduler. However, the limited I/O bandwidth of disks can become a
+% bottleneck, particularly under heavy request loads or in preemptive scheduling
+% scenarios where predicting the sequence of future requests is challenging.
+
+Existing systems have observed that many requests share identical initial
+tokens, known as prefixes. Storing and reusing keys (K) and values (V) of these common prefixes can decrease TTFT by eliminating redundant
+computations. However, conventional systems only cache these prefix KVs in GPU
+or CPU memory~\cite{promptcache-mlsys24,
+sglang-arxiv23, ragcache-arxiv24, chunkattention-arxiv24}, which can become
+insufficient for lengthy sequences or large batches, thus restricting TTFT
+reduction. AttentionStore~\cite{attentionstore-atc24} expands KV storage to
+local disks and pre-loads them into CPU memory based on the scheduler's
+predictions for future requests. Yet, disk I/O bandwidth limitations can pose a
+bottleneck, especially under high request volumes or in preemptive scheduling
+environments where anticipating future requests is difficult.
+Our study shows that the I/O latency from SSD to GPU can be rarely hidden by
+query computation and accounts for 51\%-98\% of the total TTFT, as shown in
+\cref{sec:iobottleneck}.
+
+% Consequently, prefix KV loading has become a new bottleneck in model inference, particularly for longer prefixes.
+
+Meanwhile, recent research indicates that some tokens' KVs are more critical to
+the quality of model output than others, and discarding less important KVs can
+still result in comparable LLM output quality~\cite{h2o-nips23,
+infinigen-osdi24, flexgen-icml23, scissorhands-nips23}. Based on this insight,
+we propose an importance-aware, multi-tier prefix KV \zrd{caching and speculative prefetching system}, \pname{},
+which leverages GPU memory, CPU memory, and disks to reduce LLM inference latency
+while maintaining comparable output quality. 
+GPU and CPU memory serve as caches for data stored on disks.
+\zrd{The core idea is to load only the KVs of important prefix tokens, minimizing I/O from slower disks, while prefetching future potentially critical KVs to overlap I/O with computation, further reducing latency.}
+%The core idea is to load only the  原文
+%important prefix tokens' KVs, thereby minimizing the I/O data accessed from
+%slower disks. 
+% However, achieving this is not trivial, as it involves two main challenges.
+However, building such an efficient system involves three significant challenges.
+
+First, the important tokens in a shared prefix can vary among multiple queries,
+incurring substantial I/O overhead to identify important prefix KV for each
+query. Existing systems need to load all prefix keys into GPU
+memory to calculate attention scores with the
+query, which determines the importance of each token's KVs.
+% This comprehensive key loading incurs considerable I/O overhead, especially from disk-based storage, hindering TTFT reduction. Hence, there is a need for a smart approach to identify key tokens while reducing I/O overhead.
+Loading all keys from disk storage significantly impacts I/O efficiency, impeding TTFT reduction. A smarter method to identify key tokens with minimal I/O overhead is essential.
+
+\zrdnew{Second, since the important tokens of each layer are only revealed after computing that layer’s attention scores, they cannot be prefetched during the computation of the previous layer. Existing systems either ignore token importance and randomly prefetch some tokens’ KVs, which leads to low accuracy and wastes I/O bandwidth, or they require changes to model parameters, which introduces extra overhead. Hence, a more effective method is required to identify which tokens’ KVs to prefetch in order to reduce I/O on the critical path.}
+% Second, existing systems tend to group together the KVs of tens of 
+% consecutive tokens into a single large object (e.g., a chunk) and manage 
+% them using caches, aiming to enhance disk I/O and PCIe transfer efficiency. However, since our system selectively reads only the important KVs, directly applying these existing storage and cache management methods is suboptimal for two main reasons. 
+% (1) When accessing important KVs, unimportant KVs within the same chunk are also loaded, which reduces effective disk read bandwidth and occupies additional cache space with unimportant data. (2) Current systems manage caches based on the recency and frequency of chunk access~\cite{sglang-arxiv23, cacheblend-arxiv24,ragcache-arxiv24}, without considering the importance of prefix KVs within each chunk. This can lead to chunks with a higher ratio of important KVs being stored on slower media, thereby lowering cache hit ratios.
+
+Third, existing systems often consolidate consecutive KVs into large objects
+(e.g., chunks), to optimize disk I/O and PCIe transfer bandwidths.
+However, our system's selective retrieval of important KVs makes these methods
+less efficient for two key reasons. (1) Accessing important KVs also loads irrelevant KVs from the same chunk, diminishing disk read performance and filling cache with unnecessary data.
+(2) Cache management, typically based on chunk access
+patterns~\cite{sglang-arxiv23, cacheblend-arxiv24, ragcache-arxiv24}, overlooks
+the significance of individual prefix KVs within each chunk. This can result in crucial KV-rich
+chunks being stored on slower storage, reducing cache hit ratios.
+
+% To address the first challenge, we empirically found that important token indices are highly similar across different heads within the same layer. Building on this insight, we propose a \techa{} method that involves loading only a subset of keys to identify crucial KVs within the entire prefix. 
+% To tackle the second issue, we propose \techb{} methods. 
+% We employ a \techba{} technique to reorder and repack the prefix KVs stored on disk, thereby increasing the density of important KVs in the chunks and improving the effective disk read bandwidth. Additionally, we introduce a new \techbb{} policy considering token's importance to further enhance cache hit ratios.
+
+To address the first challenge, we study the important token distributions among multiple
+heads of each layer in the LLM. We find that important token
+indices are highly similar across heads within the same layer.
+Based on this insight, we propose a \techa{} method that only loads the keys from a subset of heads
+%\he{a subset of keys} 
+to identify crucial KVs within the entire prefix. 
+
+\zrdnew{To adress the second challenge, we leverage the observation that important token distributions also exhibit inter-layer similarity across adjacent transformer layers. Building on this property, we design a \technew{} mechanism that uses the important tokens identified at layer i as a prior to predict those of layer i+1. This enables the system to prefetch the next layer’s KVs during the current layer’s computation, overlapping I/O with computation and further reducing first-token latency.}
+
+To adress the third challenge, we propose \techb{} methods. 
+We employ a \techba{} technique to reorder and repack the prefix KVs stored on
+disk, thereby increasing the density of important KVs in the chunks and
+improving the effective disk read bandwidth. Additionally, we introduce a new
+\techbb{} policy considering token's importance to further enhance cache hit
+%rates.
+ratios.
+We implement \pname{} and evaluate its performance on three LLM models with various sizes (from 6.7B to 30B) across four datasets. Our experimental results show that \pname{} achieves up to a 3.8$\times$ reduction in I/O time and a 2.8$\times$ reduction in TTFT, while maintaining an inference accuracy drop of less than 0.2\%.
+
+The main contributions of this paper are as follows:
+\begin{itemize}
+\item We present \pname{}, the first importance-informed prefix KV \zrd{caching and speculative prefetching}
+system that integrates three storage tiers: GPU memory, CPU memory, and disk. 
+
+\item We propose a similarity-guided important token identification method to
+identify important KVs, significantly reducing I/O overhead.
+\zrdnew{\item We propose \technew{} mechanism to prefetch important KVs, effectively overlapping I/O with computation.}
+
+\item We devise \techb{} methods including \techba{} and a new \techbb{} policy to further minimize I/O data volume from slower storage media.
+
+\item We implement \pname{} and our evaluation demonstrates that it reduces TTFT by up to \zrd{?}$\times$ compared to the state-of-the-art prefix KV storage systems while maintaining comparable inference accuracy.
+\end{itemize}

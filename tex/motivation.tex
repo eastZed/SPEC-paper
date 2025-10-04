@@ -1,0 +1,147 @@
+\section{Motivation and Challenges}
+\label{motiv}
+
+\begin{figure}
+	\centering
+	\subfigure[Recall Ratio]{
+		\includegraphics[width=1.5in, height=1in]{static_recall.pdf}
+		\label{fig:static-recall}
+	}
+	\hspace{0.06in}
+	\subfigure[Generation Quality]{
+		\includegraphics[width=1.5in, height=1in]{static_acc.pdf}
+		\label{fig:static-acc}
+	}
+	\vspace{-0.2in}
+	\caption{The recall ratios and the impacts on model generation quality of the static pre-identification method (SPI) under various important token retention percentages. `ORI' denotes the baseline where the SPI method is not applied.}
+	\label{fig:static_methods}
+	\vspace{-0.2in}
+\end{figure}
+
+\subsection{Not All KVs Are Equally Important}
+Recent research~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23} indicates that not all tokens' KVs are equally important for maintaining LLM inference accuracy. These methods generate and store the full set of KVs during the prefill phase, then  identify and discard the less important tokens' KVs during decoding by analyzing the attention weights. This approach reduces the computational load during the decoding phase while maintaining comparable LLM inference accuracy.
+
+Inspired by this, we propose an importance-informed three-tiered prefix KV
+\zrd{caching and speculative prefetching system} that encompasses GPU memory, CPU memory, and disk storage. \zrd{Our system addresses the disk I/O bottleneck through a two-pronged approach: selective loading and speculative prefetching. When reusing prefix KVs, we selectively load only important KVs for prefill and decoding computations, while unimportant tokens' KVs are discarded. To further optimize I/O efficiency, we propose a \technew{} mechanism that uses the current layer's important token indices to predict and prefetch the next layer's important KVs during computation, effectively overlapping I/O operations with computation. This integrated approach of selective loading combined with cross-layer speculative prefetching fundamentally alleviates the disk bottleneck by both reducing the total I/O volume and moving critical I/O operations off the inference critical path, thereby significantly reducing TTFT.} 
+%When
+%reusing prefix KVs, we aim to load only important KVs
+%%  rather than fetching them
+%% all. 
+%% \wj{Only important prefix tokens' KVs participate in prefill and decoding
+%% computations, while unimportant tokens' KVs are discarded.}
+%for prefill and decoding computations, while unimportant tokens' KVs are discarded.
+%Selectively loading the important KVs can
+%fundamentally alleviate the disk
+%bottleneck, thereby reducing TTFT.
+
+% when reusing prefix KVs 
+
+\subsection{Challenges}
+
+\noindent \textbf{Challenge 1: Directly applying existing important token identification methods on prefix KV loading still has significant I/O overhead.}
+%using existing methods to identify important prefix KVs still have significant I/O overhead.} 
+% This is because the entire set of prefix keys must first be loaded into GPU memory in order to compute the attention weights and then identify the important KVs using existing methods~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23}. Only the time of loading prefix values can be reduced. As a result, the reduction in TTFT is limited.
+%Existing methods must load the entire set of prefix keys into GPU
+%memory to compute attention weights and then identify the important
+%KVs~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23,
+%scissorhands-nips23}. 
+%As only the time of loading prefix values can be shortened, the reduction of TTFT is limited.
+\fvc{
+Existing methods must load all prefix keys into GPU
+memory to compute attention weights and then identify important
+KVs~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23,
+	scissorhands-nips23}. 
+Reducing only the loading time of prefix values limits TTFT reduction.}
+
+A straightforward approach to avoid loading all prefix keys is to statically record the identified important tokens for queries. Then, when another query with the same prefix arrives, only the KVs of pre-identified important tokens would be loaded, reducing the I/O time.
+However, this approach has a significant flaw. We observed that the importance
+of tokens within the same prefix can vary depending on the specific query. We
+intuitively explain the observation here. For example, in a RAG scenario,
+different queries might use the same document as the prefix, but the relevant
+answers could be found in different text segments of the prefix. 
+% Therefore, this method which pre-identifies important tokens might overlook crucial tokens, significantly reducing the accuracy of LLM inference.
+Thus, the method that pre-identifies important tokens could miss critical ones, substantially degrading the accuracy of LLM inference.
+
+% To validate this flaw, we test the important token recall ratio and its impact on model generation quality using two models and two datasets: OPT-6.7B on the RTE~\cite{lmeval} dataset and OPT-30B on the SQuAD~\cite{squad-arxiv18} dataset. We measure model generation quality using accuracy and F1 score, on these two datasets respectively. Figure~\ref{fig:static_methods} shows that although the recall rate exceeds 80\%, missing important KVs led to a drop in accuracy and F1 score of up to 5\% on the RTE dataset and 3.3\% on the SQuAD dataset.
+% Hence, an intelligent method is required that can dynamically identify important tokens within a prefix for different queries while introducing minimal I/O overhead.
+
+To confirm this limitation, we assess the recall ratio of important tokens and
+its effect on model generation quality across two models and datasets: OPT-6.7B
+on RTE~\cite{lmeval} and OPT-30B on SQuAD~\cite{squad-arxiv18}. We evaluate
+generation quality using accuracy and F1 score~\cite{cachegen-sigcomm24} for the two datasets respectively. As depicted in
+Figure~\ref{fig:static_methods}, even with recall ratios above 80\%, the omission
+of vital KVs results in accuracy and F1 score declines of up to 5\% for RTE and
+3.3\% for SQuAD.
+Consequently, there is a need for a dynamic method that can discern important tokens within prefixes for various queries, while minimizing I/O overhead.
+
+
+\begin{figure}
+	\centering
+	\subfigure[]{
+		\includegraphics[width=1.5in, height=1in]{impratio_per_chunk.pdf}
+		\label{fig:read_amplify}
+	}
+	\hspace{0.03in}
+	\subfigure[]{
+		\includegraphics[width=1.5in, height=1in]{impratio_accesscount.pdf}
+		\label{fig:imp_token_num}
+	}
+	\vspace{-0.2in}
+	\caption{
+		(a) The ratio of important KVs within each chunk. 
+		(b) Average ratio of important tokens in all chunks for a given chunk access frequency.}
+	\label{fig:cha2}
+	\vspace{-0.2in}
+\end{figure}
+
+\noindent 
+\zrdnew{
+\textbf{Challenge 2: The distribution of important tokens is unknown before prefetching.}
+Existing methods determine the important KVs of each layer by computing the attention weights of the current layer. As a result, the distribution of important tokens for the next layer is not available during the current layer’s computation. This prevents prefetching of the next layer’s important KVs while the current layer is being processed, leaving I/O bandwidth underutilized. A straightforward alternative is to randomly prefetch KVs for the next layer without considering their importance, but this approach suffers from low accuracy and brings many unimportant tokens’ KVs into GPU memory, thereby wasting I/O bandwidth.
+}
+
+\noindent 
+%\textbf{Challenge 2: New approaches to store prefix KV and manage caches are required considering token's importance.}
+\fvc{
+\textbf{Challenge 3: The existing prefix KV storage and caching systems are suboptimal considering token's importance.}
+}
+Existing systems typically store and manage cache by grouping KV pairs from
+several consecutive or all prefix tokens into
+chunks~\cite{chunkattention-arxiv24, sglang-arxiv23, attentionstore-atc24,
+hydragen-arxiv24}, which enhances the efficiency of disk reads and PCIe
+transfers. 
+% Each chuck contains multiple important and unimportant KVs. 
+% When fetching important tokens' KVs, each request loads entire chunks into memory, including unimportant KVs. This leads to read 
+% amplification and reduces effective read bandwidth. These unimportant KVs occupy additional cache space and decrease cache hit ratios.
+% Moreover, directly managing chunks across both CPU and GPU cache spaces based on the traditional metrics like recency or frequency can degrade GPU cache hit ratios and increase the amount of data transferred over PCIe. 
+% This is because they are oblivious of KV importance and do not consider the ratio of important KVs 
+% in each chunk. Thus, they can place cold chunks with more important KVs in the CPU, while placing hot chunks with 
+% fewer important KVs in the GPU. This misplacement reduces the hit ratio of important KVs in the GPU and requires 
+% more important KVs to be transferred from the CPU to the GPU.
+Each chunk contains a mix of important and unimportant KVs. When retrieving KVs for important tokens, entire chunks are loaded into memory, including the unimportant ones. This practice causes read amplification, diminishing effective bandwidth and filling cache with unnecessary data, which lowers cache hit ratios.
+
+Furthermore, managing chunks in CPU and GPU caches based solely on traditional
+metrics like recency or frequency can further reduce GPU cache hit ratios and
+increase PCIe data transfers. This is because these metrics ignore the
+importance of KVs and the proportion of important KVs in each chunk. As a
+result, less critical chunks may occupy valuable GPU memory, while more critical
+ones are relegated to the CPU memory. This misallocation decreases the GPU hit ratio
+for important KVs and necessitates more data transfers between CPU and GPU memory.
+
+
+We experimentally illustrate this challenge using OPT-6.7B on RTE. 
+%We select the top 50\% most important KVs from each prefix for inference. 
+% \wj{
+We designate half of the prefix tokens as important and the remaining half as unimportant.
+% }
+Figure~\ref{fig:read_amplify} shows 
+% the ratio of important KVs within each prefix KV chunk 
+% that are selected for model inference. It shows 
+that only 46\% of the KVs in the 
+loaded chunks are important on average, leading to 2.2$\times$ read amplification. 
+Figure~\ref{fig:imp_token_num} shows the ratio of important KVs for chunks with different access 
+frequency. The hotness or coldness of a chunk is not related to the 
+ratio of important KVs it contains. These observations 
+% confirm the challenges mentioned above and 
+underscore the need for new KV storage and cache management methods to reduce 
+the loading of unimportant KVs from disk and improve cache hit ratios.
