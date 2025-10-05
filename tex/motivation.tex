@@ -97,8 +97,13 @@ Consequently, there is a need for a dynamic method that can discern important to
 \noindent 
 \zrdnew{
 \textbf{Challenge 2: The distribution of important tokens is unknown before prefetching.}
-Existing methods determine the important KVs of each layer by computing the attention weights of the current layer. As a result, the distribution of important tokens for the next layer is not available during the current layer’s computation. This prevents prefetching of the next layer’s important KVs while the current layer is being processed, leaving I/O bandwidth underutilized. A straightforward alternative is to randomly prefetch KVs for the next layer without considering their importance, but this approach suffers from low accuracy and brings many unimportant tokens’ KVs into GPU memory, thereby wasting I/O bandwidth.
-}
+Existing methods determine the important KVs of each layer by computing the attention weights of the current layer. As a result, the distribution of important tokens for the next layer is not available during the current layer’s computation. This prevents prefetching of the next layer’s important KVs while the current layer is being processed, leaving I/O bandwidth underutilized. }
+
+\zrdnew{A straightforward alternative is to randomly prefetch KVs for the next layer without considering their importance, but this approach suffers from low accuracy and brings many unimportant tokens’ KVs into GPU memory, thereby wasting I/O bandwidth.}
+
+\zrdnew{To verify this, we measured the recall rate of randomly prefetching KVs across two models and datasets, xxx and xxx. As shown in Figure xxx, when KVs were pre-fetched randomly, the recall rate was only xxx. This approach leads to a large number of unimportant KVs being loaded into CPU memory, which are not used during inference, resulting in wasted I/O bandwidth and GPU memory.}
+
+
 
 \noindent 
 %\textbf{Challenge 2: New approaches to store prefix KV and manage caches are required considering token's importance.}

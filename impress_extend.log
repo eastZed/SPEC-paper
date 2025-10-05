@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.7.15)  2 OCT 2025 17:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.7.15)  4 OCT 2025 15:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -940,10 +940,10 @@ File: ./fig/impratio_accesscount.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./fig/impratio_accesscount.pdf  used on input line 88.
 
 (pdftex.def)             Requested size: 108.3948pt x 72.2632pt.
-) (./tex/design.tex
+
 
 [4 <./fig/static_recall.pdf> <./fig/static_acc.pdf> <./fig/impratio_per_chunk.p
-df> <./fig/impratio_accesscount.pdf>]
+df> <./fig/impratio_accesscount.pdf>]) (./tex/design.tex
 <./fig/overview.pdf, id=181, 489.83pt x 363.3575pt>
 File: ./fig/overview.pdf Graphic file (type pdf)
 <use ./fig/overview.pdf>
@@ -978,33 +978,33 @@ Package pdftex.def Info: ./fig/real-jcd-example.pdf  used on input line 120.
 (pdftex.def)             Requested size: 108.40527pt x 72.26834pt.
 
 
-[5 <./fig/overview.pdf> <./fig/jcd-example.pdf> <./fig/real-jcd-example.pdf>]
-<./fig/sim-ten.pdf, id=251, 2297.58376pt x 403.5075pt>
+[5 <./fig/overview.pdf>]
+<./fig/sim-ten.pdf, id=222, 2297.58376pt x 403.5075pt>
 File: ./fig/sim-ten.pdf Graphic file (type pdf)
 <use ./fig/sim-ten.pdf>
 Package pdftex.def Info: ./fig/sim-ten.pdf  used on input line 160.
 (pdftex.def)             Requested size: 231.24428pt x 43.35773pt.
-<./fig/sim-forty.pdf, id=252, 2297.58376pt x 403.5075pt>
+<./fig/sim-forty.pdf, id=223, 2297.58376pt x 403.5075pt>
 File: ./fig/sim-forty.pdf Graphic file (type pdf)
 <use ./fig/sim-forty.pdf>
 Package pdftex.def Info: ./fig/sim-forty.pdf  used on input line 163.
 (pdftex.def)             Requested size: 231.24428pt x 43.35773pt.
 
 
-<./fig/wo-techa.pdf, id=253, 402.50375pt x 73.27374pt>
+<./fig/wo-techa.pdf, id=224, 402.50375pt x 73.27374pt>
 File: ./fig/wo-techa.pdf Graphic file (type pdf)
 <use ./fig/wo-techa.pdf>
 Package pdftex.def Info: ./fig/wo-techa.pdf  used on input line 219.
 (pdftex.def)             Requested size: 231.25974pt x 43.36192pt.
-<./fig/w-techa.pdf, id=254, 402.50375pt x 70.2625pt>
+<./fig/w-techa.pdf, id=225, 402.50375pt x 70.2625pt>
 File: ./fig/w-techa.pdf Graphic file (type pdf)
 <use ./fig/w-techa.pdf>
 Package pdftex.def Info: ./fig/w-techa.pdf  used on input line 222.
 (pdftex.def)             Requested size: 231.25974pt x 43.3618pt.
 
 
-[6 <./fig/sim-ten.pdf> <./fig/sim-forty.pdf> <./fig/wo-techa.pdf> <./fig/w-tech
-a.pdf>]
+[6 <./fig/jcd-example.pdf> <./fig/real-jcd-example.pdf> <./fig/sim-ten.pdf> <./
+fig/sim-forty.pdf> <./fig/wo-techa.pdf> <./fig/w-techa.pdf>]
 <./fig/simiload-ttft.pdf, id=396, 462.72874pt x 152.57pt>
 File: ./fig/simiload-ttft.pdf Graphic file (type pdf)
 <use ./fig/simiload-ttft.pdf>
@@ -1084,6 +1084,9 @@ File: ./fig/iotime.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./fig/iotime.pdf  used on input line 44.
 (pdftex.def)             Requested size: 238.5034pt x 72.27391pt.
 
+Underfull \vbox (badness 1152) has occurred while \output is active []
+
+
 
 <./fig/indiv_ds1_ds2.pdf, id=500, 278.03876pt x 82.3075pt>
 File: ./fig/indiv_ds1_ds2.pdf Graphic file (type pdf)
@@ -1091,19 +1094,15 @@ File: ./fig/indiv_ds1_ds2.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./fig/indiv_ds1_ds2.pdf  used on input line 88.
 (pdftex.def)             Requested size: 238.4935pt x 72.2713pt.
 ) (./tex/exp-indiv.tex
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 
 [10 <./fig/overall_acc1_piqa.pdf> <./fig/overall_acc1_rte.pdf> <./fig/overall_a
-cc1_copa.pdf> <./fig/overall_acc1_openbookqa.pdf> <./fig/ttft_ds1_ds2_ds3_ds4.p
-df> <./fig/iotime.pdf>]
-<./fig/indiv_a_ds1.pdf, id=741, 442.65375pt x 111.41624pt>
+cc1_copa.pdf> <./fig/overall_acc1_openbookqa.pdf>]
+<./fig/indiv_a_ds1.pdf, id=722, 442.65375pt x 111.41624pt>
 File: ./fig/indiv_a_ds1.pdf Graphic file (type pdf)
 <use ./fig/indiv_a_ds1.pdf>
 Package pdftex.def Info: ./fig/indiv_a_ds1.pdf  used on input line 66.
 (pdftex.def)             Requested size: 238.49586pt x 57.81607pt.
-<./fig/indiv_b_cknum.pdf, id=742, 218.8175pt x 143.53625pt>
+<./fig/indiv_b_cknum.pdf, id=723, 218.8175pt x 143.53625pt>
 File: ./fig/indiv_b_cknum.pdf Graphic file (type pdf)
 <use ./fig/indiv_b_cknum.pdf>
 Package pdftex.def Info: ./fig/indiv_b_cknum.pdf  used on input line 78.
@@ -1113,7 +1112,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 78--82
 [][]
  []
 
-<./fig/indiv_c_13b.pdf, id=743, 215.80624pt x 143.53625pt>
+<./fig/indiv_c_13b.pdf, id=724, 215.80624pt x 143.53625pt>
 File: ./fig/indiv_c_13b.pdf Graphic file (type pdf)
 <use ./fig/indiv_c_13b.pdf>
 Package pdftex.def Info: ./fig/indiv_c_13b.pdf  used on input line 88.
@@ -1126,20 +1125,21 @@ Underfull \hbox (badness 4859) in paragraph at lines 92--92
 ) (./tex/exp-sensi.tex
 
 ) (./tex/exp-overhead.tex
-<./fig/sensitivity.pdf, id=744, 215.80624pt x 151.56625pt>
+<./fig/sensitivity.pdf, id=725, 215.80624pt x 151.56625pt>
 File: ./fig/sensitivity.pdf Graphic file (type pdf)
 <use ./fig/sensitivity.pdf>
 Package pdftex.def Info: ./fig/sensitivity.pdf  used on input line 8.
 (pdftex.def)             Requested size: 115.63136pt x 72.26991pt.
-<./fig/indiv_c_rte.pdf, id=745, 184.69pt x 119.44624pt>
+<./fig/indiv_c_rte.pdf, id=726, 184.69pt x 119.44624pt>
 File: ./fig/indiv_c_rte.pdf Graphic file (type pdf)
 <use ./fig/indiv_c_rte.pdf>
 Package pdftex.def Info: ./fig/indiv_c_rte.pdf  used on input line 17.
 (pdftex.def)             Requested size: 115.63104pt x 72.26974pt.
-)) (./tex/related.tex
 
-[11 <./fig/indiv_ds1_ds2.pdf> <./fig/indiv_a_ds1.pdf> <./fig/indiv_b_cknum.pdf>
- <./fig/indiv_c_13b.pdf> <./fig/sensitivity.pdf> <./fig/indiv_c_rte.pdf>]
+
+[11 <./fig/ttft_ds1_ds2_ds3_ds4.pdf> <./fig/iotime.pdf> <./fig/indiv_ds1_ds2.pd
+f> <./fig/indiv_a_ds1.pdf> <./fig/indiv_b_cknum.pdf> <./fig/indiv_c_13b.pdf> <.
+/fig/sensitivity.pdf> <./fig/indiv_c_rte.pdf>])) (./tex/related.tex
 <./fig/sens_datasetsize.pdf, id=779, 184.69pt x 119.44624pt>
 File: ./fig/sens_datasetsize.pdf Graphic file (type pdf)
 <use ./fig/sens_datasetsize.pdf>
@@ -1155,9 +1155,9 @@ File: ./fig/sens_llama.pdf Graphic file (type pdf)
 <use ./fig/sens_llama.pdf>
 Package pdftex.def Info: ./fig/sens_llama.pdf  used on input line 29.
 (pdftex.def)             Requested size: 115.63104pt x 72.26974pt.
-) (./tex/conclusion.tex) (./impress_extend.bbl
+) (./tex/conclusion.tex
 
-
+) (./impress_extend.bbl
 
 [12 <./fig/sens_datasetsize.pdf> <./fig/sens_llama.pdf>]
 Underfull \hbox (badness 2197) in paragraph at lines 171--175
@@ -1167,9 +1167,15 @@ antech /
 
 
 
-)
 
-[13] (./impress_extend.aux)
+
+[13])
+
+
+
+[14
+
+] (./impress_extend.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -1178,7 +1184,7 @@ L3 programming layer <2025-01-18>
 Here is how much of TeX's memory you used:
  20913 strings out of 473190
  418504 string characters out of 5715800
- 777155 words of memory out of 5000000
+ 782155 words of memory out of 5000000
  43708 multiletter control sequences out of 15000+600000
  603450 words of font info for 123 fonts, out of 8000000 for 9000
  1145 hyphenation exceptions out of 8191
@@ -1195,10 +1201,10 @@ xlive/2025/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025
 /texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2025/texmf-di
 st/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/t
 ype1/urw/times/utmri8a.pfb>
-Output written on impress_extend.pdf (13 pages, 808899 bytes).
+Output written on impress_extend.pdf (14 pages, 809645 bytes).
 PDF statistics:
- 851 PDF objects out of 1000 (max. 8388607)
- 332 compressed objects within 4 object streams
+ 854 PDF objects out of 1000 (max. 8388607)
+ 334 compressed objects within 4 object streams
  0 named destinations out of 1000 (max. 500000)
  178 words of extra memory for PDF output out of 10000 (max. 10000000)
 

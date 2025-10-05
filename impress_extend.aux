@@ -95,21 +95,20 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Overview of the SPEC{} system.}}{5}{}\protected@file@percent }
 \newlabel{fig:overview}{{6}{5}{}{figure.6}{}}
 \newlabel{fig:overview@cref}{{[figure][6][]6}{[1][5][]5}{}{}{}}
-\newlabel{fig:jcd-example}{{7(a)}{5}{}{subfigure.7.1}{}}
-\newlabel{fig:jcd-example@cref}{{[subfigure][1][7]7(a)}{[1][5][]5}{}{}{}}
-\newlabel{sub@fig:jcd-example}{{(a)}{5}}
-\newlabel{fig:real-jcd-example}{{7(b)}{5}{}{subfigure.7.2}{}}
-\newlabel{fig:real-jcd-example@cref}{{[subfigure][2][7]7(b)}{[1][5][]5}{}{}{}}
-\newlabel{sub@fig:real-jcd-example}{{(b)}{5}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Examples of similarities. (a) The orange rows represent the important keys whose token indices are marked in red. (b) Darker squares indicate a higher similarity between the important token index sets of two heads.}}{5}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Two Heads of K Tensors}}}{5}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Jaccard Scores Between Heads}}}{5}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Similarity-Guided Important Token Identification{}}{5}{}\protected@file@percent }
 \newlabel{sec:techa}{{\mbox  {IV-B}}{5}{}{subsection.4.2}{}}
 \newlabel{sec:techa@cref}{{[subsection][2][4]\mbox  {IV-B}}{[1][5][]5}{}{}{}}
 \citation{jaccard-18}
 \citation{h2o-nips23}
-\citation{chunkattention-arxiv24,cachegen-sigcomm24}
+\newlabel{fig:jcd-example}{{7(a)}{6}{}{subfigure.7.1}{}}
+\newlabel{fig:jcd-example@cref}{{[subfigure][1][7]7(a)}{[1][5][]6}{}{}{}}
+\newlabel{sub@fig:jcd-example}{{(a)}{6}}
+\newlabel{fig:real-jcd-example}{{7(b)}{6}{}{subfigure.7.2}{}}
+\newlabel{fig:real-jcd-example@cref}{{[subfigure][2][7]7(b)}{[1][5][]6}{}{}{}}
+\newlabel{sub@fig:real-jcd-example}{{(b)}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Examples of similarities. (a) The orange rows represent the important keys whose token indices are marked in red. (b) Darker squares indicate a higher similarity between the important token index sets of two heads.}}{6}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Two Heads of K Tensors}}}{6}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Jaccard Scores Between Heads}}}{6}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Similarities of important token index sets across all transformer layers.}}{6}{}\protected@file@percent }
 \newlabel{fig:simi-values}{{8}{6}{}{figure.8}{}}
 \newlabel{fig:simi-values@cref}{{[figure][8][]8}{[1][6][]6}{}{}{}}
@@ -120,6 +119,7 @@
 \newlabel{fig:woandw-techa@cref}{{[figure][9][]9}{[1][6][]6}{}{}{}}
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {w/o similarity-guided token selection}}}{6}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {w/ similarity-guided token selection}}}{6}{}\protected@file@percent }
+\citation{chunkattention-arxiv24,cachegen-sigcomm24}
 \citation{lmeval}
 \@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces The TTFTs with and without similarity-guided important token identification{}. Assume the LLM model consists of three transformer layers. The numbers inside the rectangles represent the layer index.}}{7}{}\protected@file@percent }
 \newlabel{fig:simiload-ttft}{{10}{7}{}{figure.10}{}}
@@ -132,29 +132,24 @@
 \newlabel{sec:technew@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][7][]7}{}{}{}}
 \citation{sglang-arxiv23,chunkattention-arxiv24}
 \citation{ragcache-arxiv24}
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Comparison of the number of chunks read before and after the token sequence is reordered. The orange (blue) rectangles represent important (unimportant) keys.}}{8}{}\protected@file@percent }
-\newlabel{fig:reordering}{{12}{8}{}{figure.12}{}}
-\newlabel{fig:reordering@cref}{{[figure][12][]12}{[1][8][]8}{}{}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Importance-Informed KV Management}{8}{}\protected@file@percent }
 \newlabel{sec:techb}{{\mbox  {IV-D}}{8}{}{subsection.4.4}{}}
 \newlabel{sec:techb@cref}{{[subsection][4][4]\mbox  {IV-D}}{[1][8][]8}{}{}{}}
 \newlabel{sec:techba}{{\mbox  {IV-D}1}{8}{}{subsubsection.4.4.1}{}}
 \newlabel{sec:techba@cref}{{[subsubsection][1][4,4]\mbox  {IV-D}1}{[1][8][]8}{}{}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}1}KV Reordering{}}{8}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Comparison of the number of chunks read before and after the token sequence is reordered. The orange (blue) rectangles represent important (unimportant) keys.}}{8}{}\protected@file@percent }
+\newlabel{fig:reordering}{{12}{8}{}{figure.12}{}}
+\newlabel{fig:reordering@cref}{{[figure][12][]12}{[1][8][]8}{}{}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Comparison of meta structure before and after KV reordering. The orange (blue) rectangles represent important (unimportant) keys.}}{8}{}\protected@file@percent }
 \newlabel{fig:metaupdate}{{13}{8}{}{figure.13}{}}
 \newlabel{fig:metaupdate@cref}{{[figure][13][]13}{[1][8][]8}{}{}{}}
-\newlabel{sec:techbb}{{\mbox  {IV-D}2}{8}{}{subsubsection.4.4.2}{}}
-\newlabel{sec:techbb@cref}{{[subsubsection][2][4,4]\mbox  {IV-D}2}{[1][8][]8}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}2}Score-Based Cache Management{}}{8}{}\protected@file@percent }
 \citation{flexgen-icml23}
 \citation{lmeval}
 \citation{infinigen-osdi24}
-\citation{infinigen-osdi24,h2o-nips23}
-\citation{cachegen-sigcomm24}
-\citation{alluneed-nips17}
-\citation{attentionstore-atc24}
-\citation{h2o-nips23}
+\newlabel{sec:techbb}{{\mbox  {IV-D}2}{9}{}{subsubsection.4.4.2}{}}
+\newlabel{sec:techbb@cref}{{[subsubsection][2][4,4]\mbox  {IV-D}2}{[1][9][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}2}Score-Based Cache Management{}}{9}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Comparison of two cache replacement policies.(a) is the frequency-based cache replacement policy and (b) is the score-based cache management{} policy. The orange (blue) rectangles represent important (unimportant) keys. Only important keys are needed for new requests.}}{9}{}\protected@file@percent }
 \newlabel{fig:score_cache}{{14}{9}{}{figure.14}{}}
 \newlabel{fig:score_cache@cref}{{[figure][14][]14}{[1][9][]9}{}{}{}}
@@ -167,6 +162,11 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Experimental Setup}{9}{}\protected@file@percent }
 \newlabel{exp:setup}{{\mbox  {VI-A}}{9}{}{subsection.6.1}{}}
 \newlabel{exp:setup@cref}{{[subsection][1][6]\mbox  {VI-A}}{[1][9][]9}{}{}{}}
+\citation{infinigen-osdi24,h2o-nips23}
+\citation{cachegen-sigcomm24}
+\citation{alluneed-nips17}
+\citation{attentionstore-atc24}
+\citation{h2o-nips23}
 \citation{chunkattention-arxiv24}
 \@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces  Model generation quality of various systems across four datasets and three models.}}{10}{}\protected@file@percent }
 \newlabel{fig:overall_acc}{{15}{10}{}{figure.15}{}}
@@ -175,30 +175,27 @@
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {RTE}}}{10}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {COPA}}}{10}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {OpenBookQA}}}{10}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces  The average TTFT with various systems across four dataset and three models.}}{10}{}\protected@file@percent }
-\newlabel{fig:overall_ttft}{{16}{10}{}{figure.16}{}}
-\newlabel{fig:overall_ttft@cref}{{[figure][16][]16}{[1][10][]10}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Prefix KV loading time on the RTE dataset.}}{10}{}\protected@file@percent }
-\newlabel{fig:iotime}{{17}{10}{}{figure.17}{}}
-\newlabel{fig:iotime@cref}{{[figure][17][]17}{[1][10][]10}{}{}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Overall Performance}{10}{}\protected@file@percent }
 \newlabel{exp:overall}{{\mbox  {VI-B}}{10}{}{subsection.6.2}{}}
 \newlabel{exp:overall@cref}{{[subsection][2][6]\mbox  {VI-B}}{[1][10][]10}{}{}{}}
-\citation{alluneed-nips17,scaling-mlsys23,vllm-sosp23,flexgen-icml23}
-\citation{attentionstore-atc24,chunkattention-arxiv24,hydragen-arxiv24,ragcache-arxiv24,sglang-arxiv23,cachegen-sigcomm24}
-\citation{promptcache-mlsys24,cacheblend-arxiv24}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Impact of Individual Techniques}{10}{}\protected@file@percent }
+\newlabel{exp:indiv}{{\mbox  {VI-C}}{10}{}{subsection.6.3}{}}
+\newlabel{exp:indiv@cref}{{[subsection][3][6]\mbox  {VI-C}}{[1][10][]10}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces  The average TTFT with various systems across four dataset and three models.}}{11}{}\protected@file@percent }
+\newlabel{fig:overall_ttft}{{16}{11}{}{figure.16}{}}
+\newlabel{fig:overall_ttft@cref}{{[figure][16][]16}{[1][10][]11}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Prefix KV loading time on the RTE dataset.}}{11}{}\protected@file@percent }
+\newlabel{fig:iotime}{{17}{11}{}{figure.17}{}}
+\newlabel{fig:iotime@cref}{{[figure][17][]17}{[1][10][]11}{}{}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces The performance impact of each optimization.}}{11}{}\protected@file@percent }
 \newlabel{fig:indiv}{{18}{11}{}{figure.18}{}}
 \newlabel{fig:indiv@cref}{{[figure][18][]18}{[1][10][]11}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces The retention of KVs per model layer using similarity-guided important token identification{}.}}{11}{}\protected@file@percent }
-\newlabel{fig:indiv_a}{{19}{11}{}{figure.19}{}}
-\newlabel{fig:indiv_a@cref}{{[figure][19][]19}{[1][11][]11}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Impact of Individual Techniques}{11}{}\protected@file@percent }
-\newlabel{exp:indiv}{{\mbox  {VI-C}}{11}{}{subsection.6.3}{}}
-\newlabel{exp:indiv@cref}{{[subsection][3][6]\mbox  {VI-C}}{[1][10][]11}{}{}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}Sensitivity Analysis}{11}{}\protected@file@percent }
 \newlabel{exp:sensi}{{\mbox  {VI-D}}{11}{}{subsection.6.4}{}}
 \newlabel{exp:sensi@cref}{{[subsection][4][6]\mbox  {VI-D}}{[1][11][]11}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces The retention of KVs per model layer using similarity-guided important token identification{}.}}{11}{}\protected@file@percent }
+\newlabel{fig:indiv_a}{{19}{11}{}{figure.19}{}}
+\newlabel{fig:indiv_a@cref}{{[figure][19][]19}{[1][11][]11}{}{}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces  The impact of KV reordering{} on the number of loaded chunks. }}{11}{}\protected@file@percent }
 \newlabel{fig:indiv_b}{{20}{11}{}{figure.20}{}}
 \newlabel{fig:indiv_b@cref}{{[figure][20][]20}{[1][11][]11}{}{}{}}
@@ -214,9 +211,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Overhead Analysis}{11}{}\protected@file@percent }
 \newlabel{exp:overhead}{{\mbox  {VI-E}}{11}{}{subsection.6.5}{}}
 \newlabel{exp:overhead@cref}{{[subsection][5][6]\mbox  {VI-E}}{[1][11][]11}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Related Work}{11}{}\protected@file@percent }
-\newlabel{related}{{VII}{11}{}{section.7}{}}
-\newlabel{related@cref}{{[section][7][]VII}{[1][11][]11}{}{}{}}
+\citation{alluneed-nips17,scaling-mlsys23,vllm-sosp23,flexgen-icml23}
+\citation{attentionstore-atc24,chunkattention-arxiv24,hydragen-arxiv24,ragcache-arxiv24,sglang-arxiv23,cachegen-sigcomm24}
+\citation{promptcache-mlsys24,cacheblend-arxiv24}
 \citation{scissorhands-nips23,flexgen-icml23,h2o-nips23,infinigen-osdi24}
 \citation{flexgen-icml23,cachegen-sigcomm24,kivi-arxiv24,kvquant-arxiv24,wkvquant-arxiv24}
 \citation{orca-osdi22,taming-osdi24}
@@ -237,22 +234,25 @@
 \bibcite{goodgpttrans-23}{10}
 \bibcite{kvquant-arxiv24}{11}
 \bibcite{tetriinf-arxiv24}{12}
-\bibcite{ragcache-arxiv24}{13}
-\bibcite{pdserve-arxiv24}{14}
-\bibcite{hydragen-arxiv24}{15}
-\bibcite{vllm-sosp23}{16}
-\bibcite{chatbotmed-23}{17}
-\bibcite{infinigen-osdi24}{18}
 \@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces  \textcolor {black}{Results on various dataset sizes.} }}{12}{}\protected@file@percent }
 \newlabel{fig:sens_datasetsize}{{24}{12}{}{figure.24}{}}
 \newlabel{fig:sens_datasetsize@cref}{{[figure][24][]24}{[1][12][]12}{}{}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces  \textcolor {black}{Results on Llama (LM) models.} }}{12}{}\protected@file@percent }
 \newlabel{fig:sens_modeltype}{{25}{12}{}{figure.25}{}}
 \newlabel{fig:sens_modeltype@cref}{{[figure][25][]25}{[1][12][]12}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Related Work}{12}{}\protected@file@percent }
+\newlabel{related}{{VII}{12}{}{section.7}{}}
+\newlabel{related@cref}{{[section][7][]VII}{[1][12][]12}{}{}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{12}{}\protected@file@percent }
 \newlabel{conclusion}{{VIII}{12}{}{section.8}{}}
 \newlabel{conclusion@cref}{{[section][8][]VIII}{[1][12][]12}{}{}{}}
 \@writefile{toc}{\contentsline {section}{References}{12}{}\protected@file@percent }
+\bibcite{ragcache-arxiv24}{13}
+\bibcite{pdserve-arxiv24}{14}
+\bibcite{hydragen-arxiv24}{15}
+\bibcite{vllm-sosp23}{16}
+\bibcite{chatbotmed-23}{17}
+\bibcite{infinigen-osdi24}{18}
 \bibcite{rag-nips20}{19}
 \bibcite{alpaserve-osdi23}{20}
 \bibcite{infinite-arxiv24}{21}
@@ -282,4 +282,4 @@
 \bibcite{h2o-nips23}{45}
 \bibcite{sglang-arxiv23}{46}
 \bibcite{distserve-osdi24}{47}
-\gdef \@abspage@last{13}
+\gdef \@abspage@last{14}
