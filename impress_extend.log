@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.7.15)  4 OCT 2025 15:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.7.15)  6 OCT 2025 14:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1018,44 +1018,56 @@ File: ./fig/dif_sim_thred.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./fig/dif_sim_thred.pdf  used on input line 283.
 (pdftex.def)             Requested size: 238.49072pt x 72.26848pt.
 ) (./tex/design_new.tex
+<./fig/sim-25-cross-layers.pdf, id=398, 2312.64pt x 433.62pt>
+File: ./fig/sim-25-cross-layers.pdf Graphic file (type pdf)
+<use ./fig/sim-25-cross-layers.pdf>
+Package pdftex.def Info: ./fig/sim-25-cross-layers.pdf  used on input line 21.
+(pdftex.def)             Requested size: 108.40472pt x 72.26541pt.
+<./fig/recall-sele.pdf, id=399, 325.215pt x 201.75375pt>
+File: ./fig/recall-sele.pdf Graphic file (type pdf)
+<use ./fig/recall-sele.pdf>
+Package pdftex.def Info: ./fig/recall-sele.pdf  used on input line 24.
+(pdftex.def)             Requested size: 108.40308pt x 72.2711pt.
+
 
 [7 <./fig/simiload-ttft.pdf> <./fig/dif_sim_thred.pdf>]) (./tex/design2.tex
-<./fig/reordering.pdf, id=428, 463.7325pt x 147.55125pt>
+<./fig/reordering.pdf, id=430, 463.7325pt x 147.55125pt>
 File: ./fig/reordering.pdf Graphic file (type pdf)
 <use ./fig/reordering.pdf>
 Package pdftex.def Info: ./fig/reordering.pdf  used on input line 19.
 (pdftex.def)             Requested size: 238.49586pt x 72.27147pt.
 
 
-<./fig/metaupdate.pdf, id=429, 557.08125pt x 204.765pt>
+<./fig/metaupdate.pdf, id=431, 557.08125pt x 204.765pt>
 File: ./fig/metaupdate.pdf Graphic file (type pdf)
 <use ./fig/metaupdate.pdf>
 Package pdftex.def Info: ./fig/metaupdate.pdf  used on input line 45.
 (pdftex.def)             Requested size: 238.48622pt x 86.72557pt.
 
 
-[8 <./fig/reordering.pdf> <./fig/metaupdate.pdf>]
-<./fig/score_cache.pdf, id=476, 473.77pt x 174.6525pt>
+[8 <./fig/sim-25-cross-layers.pdf> <./fig/recall-sele.pdf> <./fig/reordering.pd
+f> <./fig/metaupdate.pdf>]
+<./fig/score_cache.pdf, id=523, 473.77pt x 174.6525pt>
 File: ./fig/score_cache.pdf Graphic file (type pdf)
 <use ./fig/score_cache.pdf>
 Package pdftex.def Info: ./fig/score_cache.pdf  used on input line 117.
 (pdftex.def)             Requested size: 238.48929pt x 86.72374pt.
-<./fig/overall_acc1_piqa.pdf, id=477, 671.50874pt x 208.78pt>
+<./fig/overall_acc1_piqa.pdf, id=524, 671.50874pt x 208.78pt>
 File: ./fig/overall_acc1_piqa.pdf Graphic file (type pdf)
 <use ./fig/overall_acc1_piqa.pdf>
 Package pdftex.def Info: ./fig/overall_acc1_piqa.pdf  used on input line 131.
 (pdftex.def)             Requested size: 238.4846pt x 79.49968pt.
-<./fig/overall_acc1_rte.pdf, id=478, 671.50874pt x 208.78pt>
+<./fig/overall_acc1_rte.pdf, id=525, 671.50874pt x 208.78pt>
 File: ./fig/overall_acc1_rte.pdf Graphic file (type pdf)
 <use ./fig/overall_acc1_rte.pdf>
 Package pdftex.def Info: ./fig/overall_acc1_rte.pdf  used on input line 135.
 (pdftex.def)             Requested size: 238.4846pt x 79.49968pt.
-<./fig/overall_acc1_copa.pdf, id=479, 671.50874pt x 208.78pt>
+<./fig/overall_acc1_copa.pdf, id=526, 671.50874pt x 208.78pt>
 File: ./fig/overall_acc1_copa.pdf Graphic file (type pdf)
 <use ./fig/overall_acc1_copa.pdf>
 Package pdftex.def Info: ./fig/overall_acc1_copa.pdf  used on input line 138.
 (pdftex.def)             Requested size: 238.4846pt x 79.49968pt.
-<./fig/overall_acc1_openbookqa.pdf, id=480, 671.50874pt x 208.78pt>
+<./fig/overall_acc1_openbookqa.pdf, id=527, 671.50874pt x 208.78pt>
 File: ./fig/overall_acc1_openbookqa.pdf Graphic file (type pdf)
 <use ./fig/overall_acc1_openbookqa.pdf>
 Package pdftex.def Info: ./fig/overall_acc1_openbookqa.pdf  used on input line 
@@ -1071,38 +1083,40 @@ Underfull \hbox (badness 4660) in paragraph at lines 131--143
 )) (./tex/implementation.tex) (./tex/eval.tex (./tex/exp-setup.tex
 
 [9 <./fig/score_cache.pdf>]
-<./fig/ttft_ds1_ds2_ds3_ds4.pdf, id=498, 1163.66887pt x 172.0206pt>
+<./fig/ttft_ds1_ds2_ds3_ds4.pdf, id=544, 1163.66887pt x 172.0206pt>
 File: ./fig/ttft_ds1_ds2_ds3_ds4.pdf Graphic file (type pdf)
 <use ./fig/ttft_ds1_ds2_ds3_ds4.pdf>
 Package pdftex.def Info: ./fig/ttft_ds1_ds2_ds3_ds4.pdf  used on input line 62.
 
 (pdftex.def)             Requested size: 505.89003pt x 72.27176pt.
 ) (./tex/exp-overall.tex
-<./fig/iotime.pdf, id=499, 272.01625pt x 85.31876pt>
+<./fig/iotime.pdf, id=545, 272.01625pt x 85.31876pt>
 File: ./fig/iotime.pdf Graphic file (type pdf)
 <use ./fig/iotime.pdf>
 Package pdftex.def Info: ./fig/iotime.pdf  used on input line 44.
 (pdftex.def)             Requested size: 238.5034pt x 72.27391pt.
 
-Underfull \vbox (badness 1152) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
-<./fig/indiv_ds1_ds2.pdf, id=500, 278.03876pt x 82.3075pt>
+
+
+[10 <./fig/overall_acc1_piqa.pdf> <./fig/overall_acc1_rte.pdf> <./fig/overall_a
+cc1_copa.pdf> <./fig/overall_acc1_openbookqa.pdf> <./fig/ttft_ds1_ds2_ds3_ds4.p
+df> <./fig/iotime.pdf>]
+<./fig/indiv_ds1_ds2.pdf, id=786, 278.03876pt x 82.3075pt>
 File: ./fig/indiv_ds1_ds2.pdf Graphic file (type pdf)
 <use ./fig/indiv_ds1_ds2.pdf>
 Package pdftex.def Info: ./fig/indiv_ds1_ds2.pdf  used on input line 88.
 (pdftex.def)             Requested size: 238.4935pt x 72.2713pt.
 ) (./tex/exp-indiv.tex
-
-[10 <./fig/overall_acc1_piqa.pdf> <./fig/overall_acc1_rte.pdf> <./fig/overall_a
-cc1_copa.pdf> <./fig/overall_acc1_openbookqa.pdf>]
-<./fig/indiv_a_ds1.pdf, id=722, 442.65375pt x 111.41624pt>
+<./fig/indiv_a_ds1.pdf, id=787, 442.65375pt x 111.41624pt>
 File: ./fig/indiv_a_ds1.pdf Graphic file (type pdf)
 <use ./fig/indiv_a_ds1.pdf>
 Package pdftex.def Info: ./fig/indiv_a_ds1.pdf  used on input line 66.
 (pdftex.def)             Requested size: 238.49586pt x 57.81607pt.
-<./fig/indiv_b_cknum.pdf, id=723, 218.8175pt x 143.53625pt>
+<./fig/indiv_b_cknum.pdf, id=788, 218.8175pt x 143.53625pt>
 File: ./fig/indiv_b_cknum.pdf Graphic file (type pdf)
 <use ./fig/indiv_b_cknum.pdf>
 Package pdftex.def Info: ./fig/indiv_b_cknum.pdf  used on input line 78.
@@ -1112,35 +1126,34 @@ Underfull \hbox (badness 10000) in paragraph at lines 78--82
 [][]
  []
 
-<./fig/indiv_c_13b.pdf, id=724, 215.80624pt x 143.53625pt>
+<./fig/indiv_c_13b.pdf, id=789, 215.80624pt x 143.53625pt>
 File: ./fig/indiv_c_13b.pdf Graphic file (type pdf)
 <use ./fig/indiv_c_13b.pdf>
 Package pdftex.def Info: ./fig/indiv_c_13b.pdf  used on input line 88.
 (pdftex.def)             Requested size: 115.63136pt x 72.27168pt.
 
 Underfull \hbox (badness 4859) in paragraph at lines 92--92
-[]\OT1/ptm/m/n/10 Fig. 21: |The im-pact of
+[]\OT1/ptm/m/n/10 Fig. 22: |The im-pact of
  []
 
 ) (./tex/exp-sensi.tex
 
 ) (./tex/exp-overhead.tex
-<./fig/sensitivity.pdf, id=725, 215.80624pt x 151.56625pt>
+<./fig/sensitivity.pdf, id=790, 215.80624pt x 151.56625pt>
 File: ./fig/sensitivity.pdf Graphic file (type pdf)
 <use ./fig/sensitivity.pdf>
 Package pdftex.def Info: ./fig/sensitivity.pdf  used on input line 8.
 (pdftex.def)             Requested size: 115.63136pt x 72.26991pt.
-<./fig/indiv_c_rte.pdf, id=726, 184.69pt x 119.44624pt>
+<./fig/indiv_c_rte.pdf, id=791, 184.69pt x 119.44624pt>
 File: ./fig/indiv_c_rte.pdf Graphic file (type pdf)
 <use ./fig/indiv_c_rte.pdf>
 Package pdftex.def Info: ./fig/indiv_c_rte.pdf  used on input line 17.
 (pdftex.def)             Requested size: 115.63104pt x 72.26974pt.
+)) (./tex/related.tex
 
-
-[11 <./fig/ttft_ds1_ds2_ds3_ds4.pdf> <./fig/iotime.pdf> <./fig/indiv_ds1_ds2.pd
-f> <./fig/indiv_a_ds1.pdf> <./fig/indiv_b_cknum.pdf> <./fig/indiv_c_13b.pdf> <.
-/fig/sensitivity.pdf> <./fig/indiv_c_rte.pdf>])) (./tex/related.tex
-<./fig/sens_datasetsize.pdf, id=779, 184.69pt x 119.44624pt>
+[11 <./fig/indiv_ds1_ds2.pdf> <./fig/indiv_a_ds1.pdf> <./fig/indiv_b_cknum.pdf>
+ <./fig/indiv_c_13b.pdf> <./fig/sensitivity.pdf> <./fig/indiv_c_rte.pdf>]
+<./fig/sens_datasetsize.pdf, id=825, 184.69pt x 119.44624pt>
 File: ./fig/sens_datasetsize.pdf Graphic file (type pdf)
 <use ./fig/sens_datasetsize.pdf>
 Package pdftex.def Info: ./fig/sens_datasetsize.pdf  used on input line 19.
@@ -1150,14 +1163,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 19--23
 [][]
  []
 
-<./fig/sens_llama.pdf, id=780, 184.69pt x 119.44624pt>
+<./fig/sens_llama.pdf, id=826, 184.69pt x 119.44624pt>
 File: ./fig/sens_llama.pdf Graphic file (type pdf)
 <use ./fig/sens_llama.pdf>
 Package pdftex.def Info: ./fig/sens_llama.pdf  used on input line 29.
 (pdftex.def)             Requested size: 115.63104pt x 72.26974pt.
-) (./tex/conclusion.tex
+) (./tex/conclusion.tex)
 
-) (./impress_extend.bbl
+(./impress_extend.bbl
 
 [12 <./fig/sens_datasetsize.pdf> <./fig/sens_llama.pdf>]
 Underfull \hbox (badness 2197) in paragraph at lines 171--175
@@ -1167,25 +1180,19 @@ antech /
 
 
 
+)
 
-
-[13])
-
-
-
-[14
-
-] (./impress_extend.aux)
+[13] (./impress_extend.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 20913 strings out of 473190
- 418504 string characters out of 5715800
- 782155 words of memory out of 5000000
- 43708 multiletter control sequences out of 15000+600000
+ 20933 strings out of 473190
+ 419121 string characters out of 5715800
+ 778216 words of memory out of 5000000
+ 43728 multiletter control sequences out of 15000+600000
  603450 words of font info for 123 fonts, out of 8000000 for 9000
  1145 hyphenation exceptions out of 8191
  102i,9n,117p,1398b,415s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1201,10 +1208,10 @@ xlive/2025/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2025
 /texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2025/texmf-di
 st/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2025/texmf-dist/fonts/t
 ype1/urw/times/utmri8a.pfb>
-Output written on impress_extend.pdf (14 pages, 809645 bytes).
+Output written on impress_extend.pdf (13 pages, 825930 bytes).
 PDF statistics:
- 854 PDF objects out of 1000 (max. 8388607)
- 334 compressed objects within 4 object streams
+ 897 PDF objects out of 1000 (max. 8388607)
+ 351 compressed objects within 4 object streams
  0 named destinations out of 1000 (max. 500000)
- 178 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 188 words of extra memory for PDF output out of 10000 (max. 10000000)
 

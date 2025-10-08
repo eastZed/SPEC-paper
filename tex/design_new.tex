@@ -10,14 +10,28 @@
 	{Important token indices also exhibit strong consistency across adjacent layers of an LLM}
 }
 
-\zrdnew{Upon further investigation of the distribution of important token indices, we discovered that important token indices also exhibit strong consistency across adjacent layers. }
+\zrdnew{For further investigation of the distribution of important token indices, we study the similarity of the index sets of the top 25\% important tokens across adjacent layers for different models. As shown in Figure~\ref{fig:ob3}(a), we find that the distribution of important tokens is similar across layers.}
 
-
+\zrdnew{figure~\ref{fig:ob3}(a) shows that top 25 most important tokens }
+%
+\begin{figure}
+	\centering
+	\subfigure[select the top 25\% most important tokens]{
+		\includegraphics[width=1.5in, height=1in]{sim-25-cross-layers.pdf}
+	}
+	\subfigure[select different percentage most important tokens]{
+		\includegraphics[width=1.5in, height=1in]{recall-sele.pdf}
+	}
+	\vspace{-0.1in}
+	\caption{Similarities of important token index sets of adjacent layers.}
+	\label{fig:ob3}
+	\vspace{-0.1in}
+\end{figure}
 %如图xx所示，在模型的一层内，识别重要token index set和加载重要token的kv是有数据依赖的，在没有识别得到重要token index set的情况下，我们无法准确预取下一层所需的重要kv，因此在此层计算时，宝贵的I/O带宽没有被利用，在一个本就I/O瓶颈的场景下。一个naive的方法是，随机的预取一些下一层可能用到的token的kvs到GPU memory中，在下一层的重要token选择完成后，再把不在gpu mem的重要kv load到gpu mem中，然而这样的方法受制于完全不知道下一层重要token index的分布，准确率差，浪费了I/O带宽。一些工作提出了attention sink的概念，即一些特定位置的token在推理过程中总是重要的，如prompt的开头和结尾的几个token，然而，仅预取sink位置的token准确率仍不一定高（一些引用），且存在带宽利用不充分的可能。因此我们提出一种准确率高，灵活的指导预取的方法，高效的预取下一层的重要kv，并将预取与计算overlap起来。我们study了\cref{sec:techa}中提到的识别重要token的方法所识别出的重要token，发现在模型的相邻层重要token的分布是相似的，且重要性排名分位越靠前的index集合，相似度越高。相似度仍用jaccard index量化。
 %图片xx描述了基于相似性的重要token识别方法识别出的，图片xx
 
-\zrdnew{In Method 1({\cref{sec:techa}}), for the important tokens identified as shown in Figure xx, within a given layer of the model, there exists a data dependency between identifying the important token index set and loading the corresponding prefix KVs. Without first identifying the important token index set, we are unable to accurately prefetch the necessary KVs for the next layer. As a result, valuable I/O bandwidth remains underutilized during computation in a scenario that is already constrained by I/O bottlenecks. A naive approach would be to randomly prefetch some potential KVs for the next layer into GPU memory. After the important token selection for the next layer is completed, any important KVs not already in GPU memory can then be loaded into it. However, this approach suffers from the challenge of not knowing the distribution of the important token index set for the next layer, resulting in low accuracy and wasted I/O bandwidth. Some works have proposed the concept of attention sinks, where certain tokens at specific positions, such as the beginning and end of a prompt, are always important during inference. However, prefetching only these sink tokens may still result in low accuracy (some references), and there is a risk of inefficient bandwidth utilization.}
+%\zrdnew{For the important tokens identified as shown in Figure xx, within a given layer of the model, there exists a data dependency between identifying the important token index set and loading the corresponding prefix KVs. Without first identifying the important token index set, we are unable to accurately prefetch the necessary KVs for the next layer. As a result, valuable I/O bandwidth remains underutilized during computation in a scenario that is already constrained by I/O bottlenecks. A naive approach would be to randomly prefetch some potential KVs for the next layer into GPU memory. After the important token selection for the next layer is completed, any important KVs not already in GPU memory can then be loaded into it. However, this approach suffers from the challenge of not knowing the distribution of the important token index set for the next layer, resulting in low accuracy and wasted I/O bandwidth. Some works have proposed the concept of attention sinks, where certain tokens at specific positions, such as the beginning and end of a prompt, are always important during inference. However, prefetching only these sink tokens may still result in low accuracy (some references), and there is a risk of inefficient bandwidth utilization.}
+%
+%\zrdnew{To address these issues, we propose a more accurate and flexible guidance-based prefetching method that efficiently prefetches important KVs for the next layer while overlapping prefetching with computation. We studied the important tokens identified by the method mentioned in \cref{sec:techa} and found that the distribution of important tokens in adjacent layers is highly similar. Moreover, the index sets with higher importance rankings exhibit higher similarity. This similarity is quantified using the Jaccard index.}
 
-\zrdnew{To address these issues, we propose a more accurate and flexible guidance-based prefetching method that efficiently prefetches important KVs for the next layer while overlapping prefetching with computation. We studied the important tokens identified by the method mentioned in \cref{sec:techa} and found that the distribution of important tokens in adjacent layers is highly similar. Moreover, the index sets with higher importance rankings exhibit higher similarity. This similarity is quantified using the Jaccard index.}
-
-\zrdnew{Based on observation III, We propose the \technew{}mechanism. During the execution of the current layer's transformer computation, we perform speculative prefetching of important KVs for the next layer. This prefetching leverages the similarity of important token index sets across layers to improve the accuracy of speculative prefetching. Once the important token index set for the next layer is identified, any important tokens that were not pre-fetched are then loaded into memory.}
+\zrdnew{Based on observation III, We propose the \technew{}mechanism. During the execution of the current layer's  computation, we perform prefetching of important KVs for the next layer. This prefetching leverages the similarity of important token index sets across layers to improve the accuracy of prefetching. Once the important token index set for the next layer is identified, any important tokens‘ KVs that were not prefetched are then loaded into GPU memory for inference.}
