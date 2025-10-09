@@ -47,7 +47,7 @@ Meanwhile, recent research indicates that some tokens' KVs are more critical to
 the quality of model output than others, and discarding less important KVs can
 still result in comparable LLM output quality~\cite{h2o-nips23,
 infinigen-osdi24, flexgen-icml23, scissorhands-nips23}. Based on this insight,
-we propose an importance-aware, multi-tier prefix KV \zrd{caching and speculative prefetching system}, \pname{},
+we propose an importance-aware, multi-tier prefix KV \zrd{caching and  prefetching system}, \pname{},
 which leverages GPU memory, CPU memory, and disks to reduce LLM inference latency
 while maintaining comparable output quality. 
 GPU and CPU memory serve as caches for data stored on disks.
@@ -105,7 +105,7 @@ We implement \pname{} and evaluate its performance on three LLM models with vari
 
 The main contributions of this paper are as follows:
 \begin{itemize}
-\item We present \pname{}, the first importance-informed prefix KV \zrd{caching and speculative prefetching}
+\item We present \pname{}, the first importance-informed prefix KV \zrd{prefetching and caching}
 system that integrates three storage tiers: GPU memory, CPU memory, and disk. 
 
 \item We propose a similarity-guided important token identification method to
