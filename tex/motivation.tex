@@ -1,4 +1,4 @@
-\section{Motivation and Challenges}
+\cp{\section{Design Challenges of \pname{}}}
 \label{motiv}
 
 \begin{figure}
@@ -18,25 +18,6 @@
 	\vspace{-0.2in}
 \end{figure}
 
-\subsection{Not All KVs Are Equally Important}
-Recent research~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23} indicates that not all tokens' KVs are equally important for maintaining LLM inference accuracy. These methods generate and store the full set of KVs during the prefill phase, then  identify and discard the less important tokens' KVs during decoding by analyzing the attention weights. This approach reduces the computational load during the decoding phase while maintaining comparable LLM inference accuracy.
-
-Inspired by this, we propose an importance-informed three-tiered prefix KV
-\zrd{caching and speculative prefetching system} that encompasses GPU memory, CPU memory, and disk storage. \zrd{Our system addresses the disk I/O bottleneck through a two-pronged approach: selective loading and speculative prefetching. When reusing prefix KVs, we selectively load only important KVs for prefill and decoding computations, while unimportant tokens' KVs are discarded. To further optimize I/O efficiency, we propose a \technew{} mechanism that uses the current layer's important token indices to predict and prefetch the next layer's important KVs during computation, effectively overlapping I/O operations with computation. This integrated approach of selective loading combined with cross-layer speculative prefetching fundamentally alleviates the disk bottleneck by both reducing the total I/O volume and moving critical I/O operations off the inference critical path, thereby significantly reducing TTFT.} 
-%When
-%reusing prefix KVs, we aim to load only important KVs
-%%  rather than fetching them
-%% all. 
-%% \wj{Only important prefix tokens' KVs participate in prefill and decoding
-%% computations, while unimportant tokens' KVs are discarded.}
-%for prefill and decoding computations, while unimportant tokens' KVs are discarded.
-%Selectively loading the important KVs can
-%fundamentally alleviate the disk
-%bottleneck, thereby reducing TTFT.
-
-% when reusing prefix KVs 
-
-\subsection{Challenges}
 
 \noindent \textbf{Challenge 1: Directly applying existing important token identification methods on prefix KV loading still has significant I/O overhead.}
 %using existing methods to identify important prefix KVs still have significant I/O overhead.} 

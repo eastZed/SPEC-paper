@@ -1,4 +1,4 @@
-\section{Background}
+\section{Background and Motivation}
 \label{background}
 
 \begin{figure}
@@ -71,6 +71,8 @@ Recomputing the K and V tensors in Figure~\ref{fig:llm} for the same prefix lead
 	\vspace{-0.15in}
 \end{figure}
 
+\cp{\subsection{Limitations of Existing Approaches}}
+
 An effective prefix KV storage system must meet two requirements. First, it needs sufficient storage capacity to hold enough prefix KVs. A 2,600-token prefix KV alone requires 3.4 GB of storage space for a medium-sized OPT-30B model. Second, the latency for prefetching the prefix KV must be low. Otherwise, it will become a bottleneck of the LLM inference, limiting the reduction of TTFT. 
 Currently, no system can simultaneously meet these two requirements across various scenarios.
 Most existing systems store prefix KVs only in GPU and/or CPU
@@ -94,3 +96,24 @@ query computation.
 %It demonstrates that while most I/O latency can be hidden when loading prefix KVs from GPU and CPU, loading from SSD results in load stalls, which account for 51\%-98\% of the total TTFT.
 It shows that loading prefix KVs from GPU or CPU results in shorter TTFT compared to recomputation, but loading from SSD leads to longer TTFT. This is due to the I/O latency from SSD to GPU, which is rarely hidden by query computation and accounts for 51\%-98\% of the total TTFT.
 Consequently, prefix KV loading has become a new bottleneck in model inference, particularly for longer prefixes.
+
+
+
+\subsection{Not All KVs Are Equally Important}
+Recent research~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23} indicates that not all tokens' KVs are equally important for maintaining LLM inference accuracy. These methods generate and store the full set of KVs during the prefill phase, then  identify and discard the less important tokens' KVs during decoding by analyzing the attention weights. This approach reduces the computational load during the decoding phase while maintaining comparable LLM inference accuracy.
+
+Inspired by this, we propose an importance-informed three-tiered prefix KV
+\zrd{caching and speculative prefetching system} that encompasses GPU memory, CPU memory, and disk storage. \zrd{Our system addresses the disk I/O bottleneck through a two-pronged approach: selective loading and speculative prefetching. When reusing prefix KVs, we selectively load only important KVs for prefill and decoding computations, while unimportant tokens' KVs are discarded. To further optimize I/O efficiency, we propose a \technew{} mechanism that uses the current layer's important token indices to predict and prefetch the next layer's important KVs during computation, effectively overlapping I/O operations with computation. This integrated approach of selective loading combined with cross-layer speculative prefetching fundamentally alleviates the disk bottleneck by both reducing the total I/O volume and moving critical I/O operations off the inference critical path, thereby significantly reducing TTFT.} 
+%When
+%reusing prefix KVs, we aim to load only important KVs
+%%  rather than fetching them
+%% all. 
+%% \wj{Only important prefix tokens' KVs participate in prefill and decoding
+	%% computations, while unimportant tokens' KVs are discarded.}
+%for prefill and decoding computations, while unimportant tokens' KVs are discarded.
+%Selectively loading the important KVs can
+%fundamentally alleviate the disk
+%bottleneck, thereby reducing TTFT.
+
+% when reusing prefix KVs 
+
