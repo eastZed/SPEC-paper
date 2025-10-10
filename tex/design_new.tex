@@ -10,9 +10,9 @@
 	{Important token indices also exhibit strong consistency across adjacent layers of an LLM}
 }
 
-\zrdnew{For further investigation of the distribution of important token indices, we study the similarity of the index sets of the top 25\% important tokens across adjacent layers for different models. As shown in Figure~\ref{fig:ob3}(a), we find that the distribution of important tokens is similar across layers.}
+\zrdnew{For further investigation of the distribution of important token indices, we study the similarity of the index sets of the top 25\% important tokens across adjacent layers for different models. As shown in Figure~\ref{fig:ob3}(a), we find that the distribution of important tokens is similar cross layers.}
 
-\zrdnew{figure~\ref{fig:ob3}(a) shows that top 25 most important tokens }
+
 %
 \begin{figure}
 	\centering
@@ -34,4 +34,4 @@
 %
 %\zrdnew{To address these issues, we propose a more accurate and flexible guidance-based prefetching method that efficiently prefetches important KVs for the next layer while overlapping prefetching with computation. We studied the important tokens identified by the method mentioned in \cref{sec:techa} and found that the distribution of important tokens in adjacent layers is highly similar. Moreover, the index sets with higher importance rankings exhibit higher similarity. This similarity is quantified using the Jaccard index.}
 
-\zrdnew{Based on observation III, We propose the \technew{}mechanism. During the execution of the current layer's  computation, we perform prefetching of important KVs for the next layer. This prefetching leverages the similarity of important token index sets across layers to improve the accuracy of prefetching. Once the important token index set for the next layer is identified, any important tokens‘ KVs that were not prefetched are then loaded into GPU memory for inference.}
+\zrdnew{Based on observation III, We propose the \technew{} mechanism. During the computation of the current layer, we prefetch important KVs into GPU memory for the next layer. This prefetching leverages the similarity of important token index sets across layers to improve prefetching accuracy. By approximating the important token index set of the next layer with the set from the current layer, we increase the accuracy of prefetching, leading to better performance compared to random prefetching. Once the important token index set for the next layer is identified, any important tokens' KVs that were not prefetched are then loaded into GPU memory for inference.}
