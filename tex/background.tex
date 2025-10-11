@@ -41,10 +41,8 @@ The attention weights, computed from \( Q \) and \( K \), represent token releva
 \begin{figure}
 	\centering
 	\includegraphics[width=3.4in, height=1.6in]{pkvloading.pdf}
-	\vspace{-0.2in}
 	\caption{The TTFTs of various cases. Assume the LLM model consists of three transformer layers, denoted as `Lx'.}
 	\label{fig:pkvloading}
-	\vspace{-0.1in}
 \end{figure}
 
 \subsection{Shared Prefixes and Storage System}
@@ -78,31 +76,52 @@ Recomputing the K and V tensors in Figure~\ref{fig:llm} for the same prefix lead
 	\vspace{-0.15in}
 \end{figure}
 
-\cp{\subsection{Limitations of Existing Approaches}}
+\cp{\subsection{Limitations of Existing Prefix KV Storage Systems}}
 
-An effective prefix KV storage system must meet two requirements. First, it needs sufficient storage capacity to hold enough prefix KVs. A 2,600-token prefix KV alone requires 3.4 GB of storage space for a medium-sized OPT-30B model. Second, the latency for prefetching the prefix KV must be low. Otherwise, it will become a bottleneck of the LLM inference, limiting the reduction of TTFT. 
-Currently, no system can simultaneously meet these two requirements across various scenarios.
-Most existing systems store prefix KVs only in GPU and/or CPU
-memory~\cite{promptcache-mlsys24, sglang-arxiv23, ragcache-arxiv24,
-chunkattention-arxiv24}, as shown in Figure~\ref{fig:pkvloading}(c), to reduce
-TTFT. However, the limited space in GPU and CPU memory quickly becomes
-exhausted. Although the latest prefix KV storage system,
-AttentionStore~\cite{attentionstore-atc24}, stores the prefix KV on both CPU
-memory and disk to provide sufficient storage space, it doesn’t fundamentally
-reduce the load time, as the latency from disk cannot be fully hidden by
-computation in some cases as shown in Figure~\ref{fig:pkvloading}(d).  
-%Although it asynchronously loads the prefix KVs of upcoming inference requests from disk to CPU memory based on scheduler information, 
-Thus, this approach may fail under heavy request loads or in preemptive scheduling scenarios, due to the bottleneck of disk I/O.
-%Figure~\ref{fig:pload-bottleneck} shows the TTFT breakdown for recalculating shared prefixes versus loading prefix KV from different storage media using the xx dataset (details in \cref{exp:setup}). Despite the use of asynchronous loading, the I/O time required to load prefix KVs into GPU memory, which cannot be masked by computation, as shown in the figure, can account for x\% to y\% of TTFT, becoming a new bottleneck in inference.
-\zrdnew{IMPRESS~\cite{impress-fast25} proposes that loading only important KVs to reduce I/O latency while maintaining comparable accuracy. However, the identification and loading of important KVs for the next layer depend on the computation results of the current layer, which makes it impossible to prefetch them during the current layer's computation. As xxx shows, although this approach reduces the I/O volume, it fails to leverage the opportunity to parallelize I/O with computation, resulting in the I/O bandwidth being underutilized during computation.}
-Figure~\ref{fig:pload-bottleneck} shows the TTFT breakdown for recalculating
-shared prefixes versus loading and reusing prefix KVs from different storage
-media (i.e., GPU memory, CPU memory, and SSD). We vary the number of input prefix tokens from
-128 to 8k. The ``load''  time represents the I/O latency that cannot be hidden by
-query computation. 
-%It demonstrates that while most I/O latency can be hidden when loading prefix KVs from GPU and CPU, loading from SSD results in load stalls, which account for 51\%-98\% of the total TTFT.
-It shows that loading prefix KVs from GPU or CPU results in shorter TTFT compared to recomputation, but loading from SSD leads to longer TTFT. This is due to the I/O latency from SSD to GPU, which is rarely hidden by query computation and accounts for 51\%-98\% of the total TTFT.
-Consequently, prefix KV loading has become a new bottleneck in model inference, particularly for longer prefixes.
+
+An effective prefix KV storage system must satisfy two key requirements. First, it must provide sufficient storage capacity to hold a large number of prefix KVs. Second, it must ensure low latency for prefetching prefix KVs, as excessive loading delay can become a bottleneck in LLM inference and limit the reduction of time-to-first-token (TTFT). However, no existing system can simultaneously satisfy both requirements across diverse workloads. The current designs can be broadly categorized into three types, as summarized below.
+
+\paragraph{GPU/CPU-Memory-Only Storage}  
+Most existing systems, such as PromptCache~\cite{promptcache-mlsys24}, SGLang~\cite{sglang-arxiv23}, RAGCache~\cite{ragcache-arxiv24}, and ChunkAttention~\cite{chunkattention-arxiv24}, store prefix KVs only in GPU and/or CPU memory to minimize prefetch latency, as illustrated in Figure~\ref{fig:pkvloading}(c). This design achieves low TTFT by avoiding I/O operations. However, GPU and CPU memory are both limited in capacity, and the prefix KV storage space can quickly become exhausted under large-scale or multi-session scenarios.
+For example....
+
+
+\paragraph{Hybrid CPU-and-Disk Storage}  
+To overcome the memory limitation, AttentionStore~\cite{attentionstore-atc24} stores prefix KVs across CPU memory and disk, providing sufficient capacity for large-context workloads. However, this design fails to eliminate loading latency, as disk I/O cannot always be overlapped with computation, especially under heavy loads. As shown in Figure~\ref{fig:pkvloading}(d) and Figure~\ref{fig:pload-bottleneck}, loading prefix KVs from SSD incurs significantly higher TTFT than from GPU or CPU memory, since SSD-to-GPU data transfer latency—accounting for  51\%–98\%  of TTFT—is rarely hidden by computation. Thus, disk access becomes a new performance bottleneck, particularly for longer prefixes.
+
+
+
+
+\paragraph{Importance-Aware KV Loading}  
+IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference. Unlike prior systems that leverage prefetching to overlap I/O with computation, IMPRESS cannot effectively prefetch KVs in advance, since the selection and loading of important KVs for the next layer depend on the computation results of the current layer. Consequently, the I/O latency of these KVs remains exposed on the critical path, limiting end-to-end inference efficiency.
+
+
+
+
+
+
+
+
+%An effective prefix KV storage system must meet two requirements. First, it needs sufficient storage capacity to hold enough prefix KVs. Second, the latency for prefetching the prefix KV must be low. Otherwise, it will become a bottleneck of the LLM inference, limiting the reduction of TTFT. 
+%Currently, no system can simultaneously meet these two requirements across various scenarios.
+%Most existing systems store prefix KVs only in GPU and/or CPU
+%memory~\cite{promptcache-mlsys24, sglang-arxiv23, ragcache-arxiv24,
+%chunkattention-arxiv24}, as shown in Figure~\ref{fig:pkvloading}(c), to reduce
+%TTFT. However, the limited space in GPU and CPU memory quickly becomes
+%exhausted. Although the latest prefix KV storage system,
+%AttentionStore~\cite{attentionstore-atc24}, stores the prefix KV on both CPU
+%memory and disk to provide sufficient storage space, it doesn’t fundamentally
+%reduce the load time, as the latency from disk cannot be fully hidden by
+%computation in some cases as shown in Figure~\ref{fig:pkvloading}(d).  
+%Thus, this approach may fail under heavy request loads or in preemptive scheduling scenarios, due to the bottleneck of disk I/O.
+%\zrdnew{IMPRESS~\cite{impress-fast25} proposes that loading only important KVs to reduce I/O latency while maintaining comparable accuracy. However, the identification and loading of important KVs for the next layer depend on the computation results of the current layer, which makes it impossible to prefetch them during the current layer's computation. As xxx shows, although this approach reduces the I/O volume, it fails to leverage the opportunity to parallelize I/O with computation, resulting in the I/O bandwidth being underutilized during computation.}
+%Figure~\ref{fig:pload-bottleneck} shows the TTFT breakdown for recalculating
+%shared prefixes versus loading and reusing prefix KVs from different storage
+%media (i.e., GPU memory, CPU memory, and SSD). We vary the number of input prefix tokens from
+%128 to 8k. The ``load''  time represents the I/O latency that cannot be hidden by
+%query computation. 
+%It shows that loading prefix KVs from GPU or CPU results in shorter TTFT compared to recomputation, but loading from SSD leads to longer TTFT. This is due to the I/O latency from SSD to GPU, which is rarely hidden by query computation and accounts for 51\%-98\% of the total TTFT.
+%Consequently, prefix KV loading has become a new bottleneck in model inference, particularly for longer prefixes.
 
 
 
