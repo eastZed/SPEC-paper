@@ -93,7 +93,10 @@ To overcome the memory limitation, AttentionStore~\cite{attentionstore-atc24} st
 
 
 \paragraph{Importance-Aware KV Loading}  
-IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference. Unlike prior systems that leverage prefetching to overlap I/O with computation, IMPRESS cannot effectively prefetch KVs in advance, since the selection and loading of important KVs for the next layer depend on the computation results of the current layer. Consequently, the I/O latency of these KVs remains exposed on the critical path, limiting end-to-end inference efficiency.
+To mitigate the I/O bottleneck caused by loading prefix KVs from storage, IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference.
+Although prior works employ prefetching to overlap data loading with model computation and thereby reduce I/O latency, this strategy fails in IMPRESS. The selection and loading of important KVs for the next layer depend on the computation results of the current layer, making it impossible to determine which KVs to prefetch in advance. Consequently, the I/O latency of these KVs remains exposed on the critical path, limiting end-to-end inference efficiency.
+
+
 
 
 
