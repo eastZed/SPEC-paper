@@ -40,7 +40,7 @@ The attention weights, computed from \( Q \) and \( K \), represent token releva
 
 \begin{figure}
 	\centering
-	\includegraphics[width=3.4in, height=1.6in]{pkvloading.pdf}
+	\includegraphics[width=3.4in]{pkvloading.pdf}
 	\caption{The TTFTs of various cases. Assume the LLM model consists of three transformer layers, denoted as `Lx'.}
 	\label{fig:pkvloading}
 \end{figure}
@@ -120,26 +120,33 @@ This design achieves low TTFT by avoiding I/O operations and typically employs c
 to further reduce latency. 
 However, GPU and CPU memory are inherently capacity-limited, 
 causing these systems to quickly exhaust available storage under long-context or multi-session workloads. 
-\zrdnew{For example, even with two A100 nodes (each equipped with 40 GB of GPU memory) and a total of 120 GB of CPU memory, a large model such as Llama-2-70B-Chat can only store around 300 K tokens of KV caches—roughly equivalent to the chat histories of 15–20 users. In more demanding multi-agent applications, where several agents continuously exchange information within a single session, the accumulated context can easily expand to millions of tokens, leading to a KV cache size of over 1 TB.}
+For example, in multi-agent settings with ongoing interactions, 
+the context can expand to millions of tokens and require over 1 TB of KV storage, far beyond typical hardware limits[].
 As a result, while they excel in latency reduction, they fail to scale to large-context scenarios.}
 
 \cp{\paragraph{Hybrid CPU-and-Disk Storage}  
 To overcome the capacity constraint, 
 AttentionStore~\cite{attentionstore-atc24} stores prefix KVs across both CPU memory and disk, 
 providing sufficient capacity for large-context inference. 
-Nevertheless, this design introduces new latency bottlenecks: 
-disk-to-GPU data transfer cannot always be overlapped with computation, 
-especially under heavy or preemptive workloads. 
-As shown in Figure~\ref{fig:pkvloading}(d) and Figure~\ref{fig:pload-bottleneck},
-loading prefix KVs from SSD significantly increases TTFT,
-as the I/O latency, which accounts for 51\% to 98\% of the total, rarely overlaps with query computation.
-Therefore, while hybrid storage improves capacity, 
-it does so at the cost of prefetch efficiency, failing to balance both latency and scalability.}
+However, reading data from disk is inherently slow. 
+To mitigate this issue, AttentionStore leverages layer-level parallelism by prefetching the KVs 
+for the next Transformer layer while the current layer is being computed, as shown in Figure~\ref{fig:pkvloading}(d). 
+Nevertheless, the data transfer from SSD to GPU remains too slow, 
+and the latency cannot be fully hidden by computation, 
+especially under heavy or preemptive workloads. As shown in Figure~\ref{fig:pload-bottleneck}, 
+loading prefix KVs from SSD still leads to a substantial increase in TTFT, 
+as I/O latency accounts for 51\% to 98\% of the total and rarely overlaps completely with query computation.}
 
+	
 
 \cp{\paragraph{Importance-Aware KV Loading}  
-To mitigate the I/O bottleneck caused by loading prefix KVs from storage, IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference.
-Although prior works employ prefetching to overlap data loading with model computation and thereby reduce I/O latency, this strategy fails in IMPRESS. The selection and loading of important KVs for the next layer depend on the computation results of the current layer, making it impossible to determine which KVs to prefetch in advance. Consequently, the I/O latency of these KVs remains exposed on the critical path, limiting end-to-end inference efficiency.}
+To mitigate the I/O bottleneck caused by loading prefix KVs from disk, IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference, as shown in Figure~\ref{fig:pkvloading}(e).
+Although prior systems employ prefetching to overlap data loading with model computation by fetching all KVs in advance, 
+this strategy fails in IMPRESS. 
+Since IMPRESS loads only the most important KVs, 
+the selection of these KVs for the next layer depends on the computation results of the current layer. 
+As a result, the system cannot determine in advance which KVs to prefetch, 
+and their I/O latency remains exposed on the critical path, limiting end-to-end inference efficiency.}
 
 
 
