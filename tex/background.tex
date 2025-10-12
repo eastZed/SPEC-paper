@@ -120,6 +120,7 @@ This design achieves low TTFT by avoiding I/O operations and typically employs c
 to further reduce latency. 
 However, GPU and CPU memory are inherently capacity-limited, 
 causing these systems to quickly exhaust available storage under long-context or multi-session workloads. 
+\zrdnew{For example, even with two A100 nodes (each equipped with 40 GB of GPU memory) and a total of 120 GB of CPU memory, a large model such as Llama-2-70B-Chat can only store around 300 K tokens of KV caches—roughly equivalent to the chat histories of 15–20 users. In more demanding multi-agent applications, where several agents continuously exchange information within a single session, the accumulated context can easily expand to millions of tokens, leading to a KV cache size of over 1 TB.}
 As a result, while they excel in latency reduction, they fail to scale to large-context scenarios.}
 
 \cp{\paragraph{Hybrid CPU-and-Disk Storage}  
