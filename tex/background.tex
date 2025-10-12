@@ -103,11 +103,12 @@ Recomputing the K and V tensors in Figure~\ref{fig:llm} for the same prefix lead
 
 
 \cp{An effective prefix KV storage system must satisfy two key requirements. First, it must provide sufficient storage capacity to hold a large number of prefix KVs. Second, it must ensure low latency for prefetching prefix KVs, as excessive loading delay can become a bottleneck in LLM inference and limit the reduction of time-to-first-token (TTFT).
-To achieve these goals, techniques such as caching, prefetching, and importance-aware loading  
-are often employed to reduce I/O overhead and improve end-to-end efficiency. 
+To achieve these goals, existing systems expand storage beyond GPU memory by utilizing CPU memory and disk, 
+and employ techniques such as caching, prefetching, and importance-aware loading 
+to reduce I/O overhead and improve end-to-end efficiency. 
 However, as summarized in Table~\ref{tab:pkv_comparison}, 
-existing systems optimize only a subset of these dimensions, 
-and none achieves a comprehensive solution across all aspects.}
+these systems optimize only a subset of these dimensions 
+and fail to provide a comprehensive solution across all aspects.}
 
 \cp{\paragraph{GPU/CPU-Memory-Only Storage}  
 Systems such as PromptCache~\cite{promptcache-mlsys24}, 
