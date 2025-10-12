@@ -79,22 +79,66 @@ Recomputing the K and V tensors in Figure~\ref{fig:llm} for the same prefix lead
 \cp{\subsection{Limitations of Existing Prefix KV Storage Systems}}
 
 
-An effective prefix KV storage system must satisfy two key requirements. First, it must provide sufficient storage capacity to hold a large number of prefix KVs. Second, it must ensure low latency for prefetching prefix KVs, as excessive loading delay can become a bottleneck in LLM inference and limit the reduction of time-to-first-token (TTFT). However, no existing system can simultaneously satisfy both requirements across diverse workloads. The current designs can be broadly categorized into three types, as summarized below.
 
-\paragraph{GPU/CPU-Memory-Only Storage}  
-Most existing systems, such as PromptCache~\cite{promptcache-mlsys24}, SGLang~\cite{sglang-arxiv23}, RAGCache~\cite{ragcache-arxiv24}, and ChunkAttention~\cite{chunkattention-arxiv24}, store prefix KVs only in GPU and/or CPU memory to minimize prefetch latency, as illustrated in Figure~\ref{fig:pkvloading}(c). This design achieves low TTFT by avoiding I/O operations. However, GPU and CPU memory are both limited in capacity, and the prefix KV storage space can quickly become exhausted under large-scale or multi-session scenarios.
-For example....
+\begin{table}[t]
+	\centering
+	\caption{\cp{Comparison of prefix KV storage designs.}}
+	\label{tab:pkv_comparison}
+	\setlength{\tabcolsep}{3pt}  
+	\renewcommand{\arraystretch}{1.15}
+		\begin{tabular}{lccccc}
+			\specialrule{1.2pt}{0pt}{2pt}
+			\textbf{System} & \makecell{\textbf{CPU}\\\textbf{Memory}} & \textbf{Disk} & \makecell{\textbf{Import.}\\\textbf{Aware}} & \textbf{Caching} & \textbf{Prefetching} \\
+			\specialrule{1.2pt}{0pt}{2pt}
+			\textit{PromptCache}~\cite{promptcache-mlsys24} & \cmark & \xmark & \xmark & \cmark & \cmark \\
+			\textit{SGLang}~\cite{sglang-arxiv23}           & \cmark & \xmark & \xmark & \cmark & \cmark \\
+			\textit{RAGCache}~\cite{ragcache-arxiv24}       & \cmark & \xmark & \xmark & \cmark & \cmark \\
+			\textit{ChunkAttention}~\cite{chunkattention-arxiv24} & \cmark & \xmark & \xmark & \xmark & \cmark \\
+			\textit{AttentionStore}~\cite{attentionstore-atc24}   & \cmark & \cmark & \xmark & \cmark & \cmark \\
+			\textit{IMPRESS}~\cite{impress-fast25}          & \cmark & \cmark & \cmark & \cmark & \xmark \\
+			\textit{\pname{} (Ours)}          & \cmark & \cmark & \cmark & \cmark & \cmark \\
+			\specialrule{1.2pt}{0pt}{2pt}
+		\end{tabular}
+\end{table}
 
 
-\paragraph{Hybrid CPU-and-Disk Storage}  
-To overcome the memory limitation, AttentionStore~\cite{attentionstore-atc24} stores prefix KVs across CPU memory and disk, providing sufficient capacity for large-context workloads. However, this design fails to eliminate loading latency, as disk I/O cannot always be overlapped with computation, especially under heavy loads. As shown in Figure~\ref{fig:pkvloading}(d) and Figure~\ref{fig:pload-bottleneck}, loading prefix KVs from SSD incurs significantly higher TTFT than from GPU or CPU memory, since SSD-to-GPU data transfer latency—accounting for  51\%–98\%  of TTFT—is rarely hidden by computation. Thus, disk access becomes a new performance bottleneck, particularly for longer prefixes.
+\cp{An effective prefix KV storage system must satisfy two key requirements. First, it must provide sufficient storage capacity to hold a large number of prefix KVs. Second, it must ensure low latency for prefetching prefix KVs, as excessive loading delay can become a bottleneck in LLM inference and limit the reduction of time-to-first-token (TTFT).
+To achieve these goals, techniques such as caching, prefetching, and importance-aware loading  
+are often employed to reduce I/O overhead and improve end-to-end efficiency. 
+However, as summarized in Table~\ref{tab:pkv_comparison}, 
+existing systems optimize only a subset of these dimensions, 
+and none achieves a comprehensive solution across all aspects.}
+
+\cp{\paragraph{GPU/CPU-Memory-Only Storage}  
+Systems such as PromptCache~\cite{promptcache-mlsys24}, 
+SGLang~\cite{sglang-arxiv23}, 
+RAGCache~\cite{ragcache-arxiv24}, 
+and ChunkAttention~\cite{chunkattention-arxiv24} 
+store prefix KVs solely in GPU and/or CPU memory to minimize prefetch latency, 
+as illustrated in Figure~\ref{fig:pkvloading}(c). 
+This design achieves low TTFT by avoiding I/O operations and typically employs caching and prefetching 
+to further reduce latency. 
+However, GPU and CPU memory are inherently capacity-limited, 
+causing these systems to quickly exhaust available storage under long-context or multi-session workloads. 
+As a result, while they excel in latency reduction, they fail to scale to large-context scenarios.}
+
+\cp{\paragraph{Hybrid CPU-and-Disk Storage}  
+To overcome the capacity constraint, 
+AttentionStore~\cite{attentionstore-atc24} stores prefix KVs across both CPU memory and disk, 
+providing sufficient capacity for large-context inference. 
+Nevertheless, this design introduces new latency bottlenecks: 
+disk-to-GPU data transfer cannot always be overlapped with computation, 
+especially under heavy or preemptive workloads. 
+As shown in Figure~\ref{fig:pkvloading}(d) and Figure~\ref{fig:pload-bottleneck},
+loading prefix KVs from SSD significantly increases TTFT,
+as the I/O latency, which accounts for 51\% to 98\% of the total, rarely overlaps with query computation.
+Therefore, while hybrid storage improves capacity, 
+it does so at the cost of prefetch efficiency, failing to balance both latency and scalability.}
 
 
-
-
-\paragraph{Importance-Aware KV Loading}  
+\cp{\paragraph{Importance-Aware KV Loading}  
 To mitigate the I/O bottleneck caused by loading prefix KVs from storage, IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference.
-Although prior works employ prefetching to overlap data loading with model computation and thereby reduce I/O latency, this strategy fails in IMPRESS. The selection and loading of important KVs for the next layer depend on the computation results of the current layer, making it impossible to determine which KVs to prefetch in advance. Consequently, the I/O latency of these KVs remains exposed on the critical path, limiting end-to-end inference efficiency.
+Although prior works employ prefetching to overlap data loading with model computation and thereby reduce I/O latency, this strategy fails in IMPRESS. The selection and loading of important KVs for the next layer depend on the computation results of the current layer, making it impossible to determine which KVs to prefetch in advance. Consequently, the I/O latency of these KVs remains exposed on the critical path, limiting end-to-end inference efficiency.}
 
 
 

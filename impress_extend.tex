@@ -16,14 +16,14 @@
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{subfigure}
-
+\usepackage{booktabs}
 \usepackage[normalem]{ulem}
 \usepackage{algorithmicx}
 \usepackage[ruled]{algorithm}
 %\usepackage[noend]{algpseudocode}
 \usepackage{algpseudocode}
 \usepackage[normalem]{ulem}  
-
+\usepackage{makecell}  
 % \usepackage{url}
 % \def\UrlBreaks{\do\/\do-}
 \usepackage{breakurl}
@@ -46,6 +46,9 @@
 \usepackage{cite}
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 % updated with editorial comments 8/9/2021
+
+\newcommand{\cmark}{\textcolor{teal}{\ding{52}}}   % ✔ 青绿色
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}    % ✗ 红色
 
 \newcommand{\pname}[1]{HyperInfer{#1}}
 %\newcommand{\pname}[1]{\textsc{HyperInfer}{#1}}
