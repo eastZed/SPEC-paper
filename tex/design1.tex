@@ -201,7 +201,7 @@ respectively. We have two findings.
 
 %\textbf{Observation 2:} \textit{.}
 
-Based on the above observations, we propose the \techa{} technique. The core idea is that \textit{because of the similarity we can leverage the important token index set generated from a few selected heads to approximate the important token index sets for the remaining heads}. For simplicity, we refer to these selected heads as \textit{probe heads}. Since this process involves loading only keys from a subset of the heads instead of all heads, it reduces both I/O data volume and TTFT.
+\textbf{Design}. Based on the above observations, we propose the \techa{} technique. The core idea is that \textit{because of the similarity we can leverage the important token index set generated from a few selected heads to approximate the important token index sets for the remaining heads}. For simplicity, we refer to these selected heads as \textit{probe heads}. Since this process involves loading only keys from a subset of the heads instead of all heads, it reduces both I/O data volume and TTFT.
 
 As some layers exhibit less pronounced similarity between important token
 sets across different heads, applying this technique to these layers may
@@ -260,7 +260,6 @@ While the I/O data volume cannot be reduced when the probe heads' similarity doe
 \begin{figure}
 	\centering
 	\includegraphics[width=3.4in, height=1.2in]{simiload-ttft.pdf}
-	\vspace{-0.2in}
 	\caption{The TTFTs with and without \techa{}. Assume the LLM model consists of three transformer layers. The numbers inside the rectangles represent the layer index.}
 	\label{fig:simiload-ttft}
 \end{figure}
