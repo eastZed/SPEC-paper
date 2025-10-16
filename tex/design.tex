@@ -5,7 +5,7 @@
 %We first introduce the system overview of SPEC and then elaborate on its three key components.}
 First, we describe the overall architecture of \pname{} (\cref{sec:overview}). 
 \zrdnew{Then, we introduce an I/O-efficient technique to identify important tokens (\cref{sec:techa}). 
-Furthermore, we propose a speculative prefetching technique to mitigate I/O bottlenecks by overlapping computation and I/O ({\cref{sec:technew}})}.
+Furthermore, we propose a prefetching technique to mitigate I/O bottlenecks by overlapping computation and I/O ({\cref{sec:technew}})}.
 Finally, we explain how prefix KVs are managed across three storage tiers 
 to further reduce the latency when loading them into GPU memory (\cref{sec:techb}).
 
@@ -17,9 +17,11 @@ to further reduce the latency when loading them into GPU memory (\cref{sec:techb
 
 We propose \pname{} to provide large storage capacity for prefix KVs while
 ensuring efficient I/O accesses to reduce TTFT. The system is designed based on
-two principles: (1) Using a minimal number of I/Os to identify the
+three principles: (1) Using a minimal number of I/Os to identify the
 important KVs within a prefix, allowing only the essential KVs to be loaded
-during the prefill phase; (2) Since loading only important KVs could degrade
+during the prefill phase; 
+\cp{(2) Since the I/Os for loading essential KVs lie on the critical path, we introduce data prefetching during model computation to mitigate the I/O overhead.}
+(3) Since loading only important KVs could degrade
 the efficiency of existing storage and caching systems, we optimize the
 three-tier prefix KV management to improve cache hit
 ratios and I/O efficiency.
@@ -28,14 +30,14 @@ Figure~\ref{fig:overview} presents the overall architecture of \pname{}.
 % It consists of a data plane and two control components.
 In the data plane, all prefix KVs are stored on disks in chunks, with some
 prefix KVs cached in either CPU memory or GPU memory. The data in the two cache
-spaces are exclusive to avoid space wastage. The metadata in the CPU memory is
-organized using a radix tree~\cite{sglang-arxiv23}, which facilitates quick
-searches for the reusable prefix KVs.
-% \ysl{to find which prefix KVs can be reused and to locate them}.
-The runtime
-space stores model parameters and intermediate data needed for GPU
-inference.
-\pname{} has two control components including important token identification (ITF) (\cref{sec:techa}) and 
+spaces are exclusive to avoid space wastage. 
+%此外，在这些KV中有一些会被判定为预取KV，会在推理计算过程中被提前取出。
+
+
+%The metadata in the CPU memory is
+%organized using a radix tree~\cite{sglang-arxiv23}, which facilitates quick searches for the reusable prefix KVs. 
+The runtime space stores model parameters and intermediate data needed for GPU inference.
+\pname{} has three control components including important token identification (ITF) (\cref{sec:techa}) and 
 prefix KV management (PKM) (\cref{sec:techb}).  ITF identifies important tokens within a chunk by loading 
 only partial keys rather than all of them, reducing the amount of data loaded from disks. 
 PKM manages the storage and data movement of prefix KVs across disks and the two cache spaces in CPU and GPU memory.
