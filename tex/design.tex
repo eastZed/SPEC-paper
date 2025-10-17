@@ -26,21 +26,10 @@ the efficiency of existing storage and caching systems, we optimize the
 three-tier prefix KV management to improve cache hit
 ratios and I/O efficiency.
 
-Figure~\ref{fig:overview} presents the overall architecture of \pname{}. 
-% It consists of a data plane and two control components.
-In the data plane, all prefix KVs are stored on disks in chunks, with some
-prefix KVs cached in either CPU memory or GPU memory. The data in the two cache
-spaces are exclusive to avoid space wastage. 
-%此外，在这些KV中有一些会被判定为预取KV，会在推理计算过程中被提前取出。
+\cp{Figure~\ref{fig:overview} illustrates the overall architecture of \pname{}, which consists of a data plane responsible for KV storage and a control plane that governs runtime data movement and computation scheduling.
+In the data plane, all prefix key–value (KV) pairs are stored on disks in chunked form, while selected KVs are cached in either CPU or GPU memory. The two cache spaces are mutually exclusive to prevent redundancy. To mitigate I/O latency, essential KVs are prefetched during model computation to overlap data transfer with inference execution.}
 
-
-%The metadata in the CPU memory is
-%organized using a radix tree~\cite{sglang-arxiv23}, which facilitates quick searches for the reusable prefix KVs. 
-The runtime space stores model parameters and intermediate data needed for GPU inference.
-\pname{} has three control components including important token identification (ITF) (\cref{sec:techa}) and 
-prefix KV management (PKM) (\cref{sec:techb}).  ITF identifies important tokens within a chunk by loading 
-only partial keys rather than all of them, reducing the amount of data loaded from disks. 
-PKM manages the storage and data movement of prefix KVs across disks and the two cache spaces in CPU and GPU memory.
+\cp{The control plane manages GPU inference and includes three core modules: important token filtering (\cref{sec:techa}), data prefetching (\cref{sec:techc}), and prefix KV placement (\cref{sec:techb}). The token filtering module loads only a subset of key vectors to identify important tokens, reducing disk I/O. The prefetching module proactively loads critical KVs during computation to hide I/O overhead. The KV placement module manages KV distribution across disks, CPU memory, and GPU memory to maximize cache efficiency and eliminate redundancy.}
 
 \begin{figure}
 	\centering
