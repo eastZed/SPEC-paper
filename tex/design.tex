@@ -41,31 +41,44 @@ In the data plane, all prefix key–value (KV) pairs are stored on disks in chun
 
 
 \noindent \textbf{Dataflow of \pname{}.} 
-Assume that a request $S=[t^p_0, t^p_1,...,t^p_{m-1}, t^q_0, t^q_1,...,t^q_{n-1}]$ arrives.
-$m$ is the number of tokens in prefix and $n$ is the number of tokens in the query.
-$t^p$ and $t^q$ denote the prefix and non-prefix tokens respectively. 
-First, given the request, \pname{} searches the radix tree to find the longest common 
+\cp{Assume that a request $S=[t^p_0,...,t^p_{m}, t^q_0, ...,t^q_{n}]$ arrives.
+$m$ is the number of tokens in the prefix and $n$ is the number of tokens in the query.
+$t^p$ and $t^q$ denote the prefix and non-prefix tokens, respectively. 
+First, given the request, \pname{} queries the database to find the longest common 
 prefix subsequence from all previous requests~\cite{sglang-arxiv23, chunkattention-arxiv24}. 
-Let's assume the result is  
-%$R=[t^p_{i}, t^p_{i+1}, ..., t^p_j]$, whose KVs are 
-$R=[t^p_0, t^p_1, ..., t^p_j]$, whose KVs are
-stored in GPU memory, CPU memory, or disk.
-There may also be some prefix tokens \( NR = [t^p_{j+1}, ..., t^p_{m-1}] \) that are not in the radix tree, and therefore their KVs do not exist in the system.
-Next, \pname{} employs the I/O-efficient ITF method to identify 
-the important tokens within $R$ , assuming $R_{important}=[t^p_{t}, t^p_{t+1}, ..., t^p_s]$ 
-%($ i \leq t \leq s \leq j$) is identified. 
-($ 0 \leq t \leq s \leq j$) is identified.
-If KVs in $R_{important}$ are not in GPU memory, they are loaded from disk or CPU memory. 
-The KVs of unimportant tokens in $R$ are not reused and do not participate in further inference.
-Then, the loaded $R_{important}$, the tokens $NR$, and the tokens $[t^q_0, t^q_1,...,t^q_{n-1}]$   
-are sent into LLM model, completing the remaining computations in the prefill phase.
-Essentially, $R_{important}$ plus $NR$ becomes the defacto prefix used in the LLM inference,
-replacing the set of \{$t^p$\} in $S$.
-%Finally, the newly generated KVs for the prefix token in $R_{important}$ are stored on disk, 
-%and the prefix tokens in $R_{important}$ are inserted into the radix tree for future reuse by other requests. 
-Finally, the newly generated KVs for the prefix token in $NR$ are stored on disk, 
-and the prefix tokens in $NR$ are inserted into the radix tree for future reuse by other requests. 
+Let's assume that the entire prefix $R=[t^p_0,...,t^p_{m}]$ is found in the database, and its corresponding key--value (KV) pairs are stored across GPU memory, CPU memory, or disk.
+Next, \pname{} identifies the important tokens within $R$, assuming $R_{important}=[t^p_{t}, t^p_{t+1}, ..., t^p_s]$ 
+($ 0 \leq t \leq s \leq m$) is identified (\cref{sec:techa}).
+If the KVs in $R_{important}$ are not in GPU memory, they are loaded from lower memory tiers (CPU or disk) (\cref{sec:techb}).
+During this process, the system also predicts the next set of important KVs and proactively prefetches them from deeper storage layers to overlap I/O with computation, thereby further mitigating data access latency  (\cref{sec:techc}).
+The KVs of unimportant tokens in $R$ are not reused and do not participate in subsequent inference.
+Then, the loaded $R_{important}$ and the query tokens are sent into the LLM model, completing the remaining computations in the prefill phase.
 The decoding phase remains unchanged, following existing systems~\cite{alluneed-nips17}.
+}
+
+
+
+%Assume that a request $S=[t^p_0, t^p_1,...,t^p_{m-1}, t^q_0, t^q_1,...,t^q_{n-1}]$ arrives.
+%$m$ is the number of tokens in prefix and $n$ is the number of tokens in the query.
+%$t^p$ and $t^q$ denote the prefix and non-prefix tokens respectively. 
+%First, given the request, \pname{} searches the radix tree to find the longest common 
+%prefix subsequence from all previous requests~\cite{sglang-arxiv23, chunkattention-arxiv24}. 
+%Let's assume the result is  
+%$R=[t^p_0, t^p_1, ..., t^p_j]$, whose KVs are
+%stored in GPU memory, CPU memory, or disk.
+%There may also be some prefix tokens \( NR = [t^p_{j+1}, ..., t^p_{m-1}] \) that are not in the radix tree, and therefore their KVs do not exist in the system.
+%Next, \pname{} employs the I/O-efficient ITF method to identify 
+%the important tokens within $R$ , assuming $R_{important}=[t^p_{t}, t^p_{t+1}, ..., t^p_s]$ 
+%($ 0 \leq t \leq s \leq j$) is identified.
+%If KVs in $R_{important}$ are not in GPU memory, they are loaded from disk or CPU memory. 
+%The KVs of unimportant tokens in $R$ are not reused and do not participate in further inference.
+%Then, the loaded $R_{important}$, the tokens $NR$, and the tokens $[t^q_0, t^q_1,...,t^q_{n-1}]$   
+%are sent into LLM model, completing the remaining computations in the prefill phase.
+%Essentially, $R_{important}$ plus $NR$ becomes the defacto prefix used in the LLM inference,
+%replacing the set of \{$t^p$\} in $S$.
+%Finally, the newly generated KVs for the prefix token in $NR$ are stored on disk, 
+%and the prefix tokens in $NR$ are inserted into the radix tree for future reuse by other requests. 
+%The decoding phase remains unchanged, following existing systems~\cite{alluneed-nips17}.
 
 % \wj{
 \noindent \textbf{Importance metric.} 
