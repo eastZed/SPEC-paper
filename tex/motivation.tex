@@ -74,8 +74,8 @@ These results motivate a dynamic approach that identifies important tokens per q
 
 \noindent 
 \zrdnew{
-\textbf{Challenge 2: important tokens are unknown before prefetching.}
-Existing methods determine the important KVs of each layer by computing the attention weights of the current layer. As a result, the distribution of important tokens for the next layer is not available during the current layer’s computation. This prevents prefetching of the next layer’s important KVs while the current layer is being processed, leaving I/O bandwidth underutilized. }
+\textbf{Challenge 2: Prefetching mitigates KV loading latency but is infeasible when the important tokens are unknown prior to execution.}
+During inference, prefetching can be performed by loading the KV pairs required for the next transformer layer in advance, while the current layer is being computed. This technique allows I/O operations and computation to overlap, thereby hiding data loading latency and improving pipeline efficiency. However, in \pname{}, only the important KVs are loaded to reduce unnecessary I/O. These important KVs are determined based on the attention weights of the current layer, meaning that the important tokens for the next layer remain unknown until the current computation finishes. Consequently, the system cannot prefetch the next layer’s required KVs in advance, leaving I/O bandwidth underutilized.}
 
 \zrdnew{A straightforward alternative is to randomly prefetch KVs for the next layer without considering their importance, 
 but this approach suffers from low prefetch precision and loads numerous unimportant tokens’ KVs into GPU memory, wasting I/O bandwidth.}
