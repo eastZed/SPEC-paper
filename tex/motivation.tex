@@ -20,8 +20,9 @@
 \noindent \textbf{Challenge 1: Importance identification introduces high I/O overhead for prefix KV loading.}
 \cp{Existing methods identify important KVs by loading all prefix keys (K) into GPU memory~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23}, 
 so reducing only the loading time of values (V) yields limited TTFT gains. 
-A static alternative records important tokens for each prefix and loads only their KVs when reused, 
-reducing I/O but ignoring that token importance is query-dependent. 
+A naive solution to reduce I/O overhead is to pre-record the important tokens of each prefix based on prior queries and load only their KVs when the same prefix reappears. 
+However, this static approach fails to account for query-dependent token importance. 
+In practice, token relevance within the same prefix can vary significantly across different queries. 
 In RAG, for example, different queries sharing the same document prefix may attend to different segments, 
 causing static selection to miss critical tokens and degrade accuracy. 
 We evaluate this limitation using OPT-6.7B on RTE~\cite{lmeval} and OPT-30B on SQuAD~\cite{squad-arxiv18}, 
