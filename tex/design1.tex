@@ -311,21 +311,18 @@ Without \techa{}, in Figure~\ref{fig:simiload-ttft}(a), the loading of a large n
 
 %Setting the similarity threshold is complex. A threshold set too high might fail to reduce the number of keys and values across many transformer layers, as the average similarity of the probe heads often falls short of the threshold. On the other hand, a threshold set too low can introduce bias in the identified important token index set, compromising model accuracy.
 %Figure~\ref{fig:thred} illustrates this on the PIQA~\cite{lmeval} dataset, where each transformer layer selects the top 25\% of the most critical prefix KVs. Although decreasing the threshold from 1 to 0 cuts the number of keys loaded by 4$\times$, it also results in a 1.6\% decrease in accuracy, from 79.1\% to 77.5\%. Similar patterns are observed across other datasets.
-<<<<<<< HEAD
 %
 %
 %To address this issue, we first calculate the expected value based on the proportion of selected important tokens, then slightly increase this value and use it as the similarity threshold.
 %Specifically, suppose we have a prefix containing \(n\) tokens and need to select \(k\) important tokens (\(k \leq n\)). If we randomly execute this selection twice, we obtain sets \(A\) and \(B\). The probability of each token appearing in both sets is \(\frac{k^2}{n^2}\). Given \(N\) tokens in total, \(E(A \cap B) = n \cdot \frac{k^2}{n^2}\ = \frac{k^2}{n}\), and \(E(A \cup B) = E(A) + E(B) - E(A \cap B) = k + k - \frac{k^2}{n} = 2k - \frac{k^2}{n}\). Therefore, \(E(\text{Jaccard}(A, B)) = \frac{E(A \cap B)}{E(A \cup B)} = \frac{k/n}{2 - (k/n)}\). Denote this expected value as \(j\). We set the threshold \(t = j^\alpha\), where we empirically choose \(\alpha = 0.6\) in our experiments to achieve a good balance between model inference accuracy and the amount of keys loaded. 
 \zrd{Setting the similarity threshold requires careful balance. A threshold that is too high prevents key–value reduction across layers, while one that is too low biases the important-token selection and harms accuracy. As shown in Figure \ref{fig:thred} on the PIQA \cite{lmeval} dataset, lowering the threshold from 1 to 0 reduces key loading by 4× but decreases accuracy by 1.6 points (79.1% → 77.5%), with similar trends across other datasets.
 To mitigate this, we estimate the expected Jaccard similarity between two random selections of $k$ important tokens from $n$ candidates as $E(\text{Jaccard}) = \frac{k/n}{2 - (k/n)}$, denoted by $j$, and set the threshold to $t = j^{\alpha}$. Empirically, choosing $\alpha = 0.6$ provides a good trade-off between inference accuracy and the number of loaded keys.
-=======
 \zrd{Setting the similarity threshold is crucial. 
 	A high threshold may fail to reduce key-value loading, as probe head similarity often falls below it; 
 	a low threshold, however, can bias the selected important tokens and degrade accuracy. 
 	As shown in Figure~\ref{fig:thred} on the PIQA~\cite{lmeval} dataset, each transformer layer selects the top 25\% most critical prefix KVs. 
 	Lowering the threshold from 1 to 0 reduces the number of loaded keys by 4$\times$, but also decreases accuracy from 79.1\% to 77.5\%. 
 	Similar trends hold across other datasets.
->>>>>>> 48085a8 (short design1)
 }
 
 
