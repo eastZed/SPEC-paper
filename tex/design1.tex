@@ -293,7 +293,8 @@ Moreover, loading a subset of keys for attention weight calculations reduces the
 %\fv{
 %We first compute the similarity of important token sets between each pair of  probe heads, and then take the average to measure the overall similarity among the three probe heads. Thus, the similarity is independent of the order of probe heads.
 %}
-\zrd{To make the algorithm practical, we need to determine the number of probe heads and the similarity threshold. Using a single probe head may introduce bias, while two heads can yield inconsistent voting results. We therefore adopt three probe heads, which balance accuracy and efficiency. Adding more heads provides negligible accuracy gains but increases key-loading latency and TTFT. Since the choice of heads has minimal effect due to their high similarity, we simply use the first three heads in each transformer layer for fast selection. 
+\zrd{To make the algorithm practical, we determine both the number of probe heads and the similarity threshold. Using a single probe head may introduce bias, while two heads can produce inconsistent results. Empirically, adopting three probe heads achieves a good balance between accuracy and efficiency. Adding more heads provides negligible accuracy improvement but increases key-loading latency and TTFT. Since attention heads exhibit high similarity, we simply select the first three heads in each transformer layer for efficiency. 
+The similarity threshold also plays a critical role. A high threshold may fail to reduce KV loading because the measured similarity among probe heads often falls below it, whereas a low threshold may bias the selection of important tokens and degrade accuracy. As shown in Figure~\ref{fig:thred} on the PIQA~\cite{lmeval} dataset, each transformer layer selects the top 25\% most critical prefix KVs. Reducing the threshold from 1 to 0 decreases the number of loaded keys by 4$\times$, but also reduces accuracy from 79.1\% to 77.5\%. Similar trends are observed across other datasets.
 }
 
 
@@ -318,13 +319,7 @@ Moreover, loading a subset of keys for attention weight calculations reduces the
 %
 %To address this issue, we first calculate the expected value based on the proportion of selected important tokens, then slightly increase this value and use it as the similarity threshold.
 %Specifically, suppose we have a prefix containing \(n\) tokens and need to select \(k\) important tokens (\(k \leq n\)). If we randomly execute this selection twice, we obtain sets \(A\) and \(B\). The probability of each token appearing in both sets is \(\frac{k^2}{n^2}\). Given \(N\) tokens in total, \(E(A \cap B) = n \cdot \frac{k^2}{n^2}\ = \frac{k^2}{n}\), and \(E(A \cup B) = E(A) + E(B) - E(A \cap B) = k + k - \frac{k^2}{n} = 2k - \frac{k^2}{n}\). Therefore, \(E(\text{Jaccard}(A, B)) = \frac{E(A \cap B)}{E(A \cup B)} = \frac{k/n}{2 - (k/n)}\). Denote this expected value as \(j\). We set the threshold \(t = j^\alpha\), where we empirically choose \(\alpha = 0.6\) in our experiments to achieve a good balance between model inference accuracy and the amount of keys loaded. 
-\zrd{Setting the similarity threshold is crucial. 
-	A high threshold may fail to reduce key-value loading, as probe head similarity often falls below it; 
-	a low threshold, however, can bias the selected important tokens and degrade accuracy. 
-	As shown in Figure~\ref{fig:thred} on the PIQA~\cite{lmeval} dataset, each transformer layer selects the top 25\% most critical prefix KVs. 
-	Lowering the threshold from 1 to 0 reduces the number of loaded keys by 4$\times$, but also decreases accuracy from 79.1\% to 77.5\%. 
-	Similar trends hold across other datasets.
-}
+
 
 To address this issue, we calculate the expected value based on the proportion of selected important tokens and use it as the similarity threshold. 
 Assume a prefix contains \(n\) tokens and \(k\) important tokens (\(k \leq n\)). 
