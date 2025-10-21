@@ -210,7 +210,7 @@ We have two findings:
 
 %\textbf{Observation 2:} \textit{.}
 
-\textbf{Design}. Based on the above observations, we propose the \techa{} technique. The core idea is that \textit{because of the similarity we can leverage the important token index set generated from a few selected heads to approximate the important token index sets for the remaining heads}. For simplicity, we refer to these selected heads as \textit{probe heads}. Since this process involves loading only keys from a subset of the heads instead of all heads, it reduces both I/O data volume and TTFT.
+\textbf{Design}. Based on the above observations, we propose the \techa{} technique. The core idea is that \textit{owing to the high similarity among attention heads, we can use the important token indices identified from a few selected heads to approximate those of the remaining heads}. For simplicity, we refer to these selected heads as \textit{probe heads}. Since this process involves loading only keys from a subset of the heads instead of all heads, it reduces both I/O data volume and TTFT.
 
 As some layers exhibit less pronounced similarity between important token
 sets across different heads, applying this technique to these layers may
@@ -238,8 +238,8 @@ is higher than the similarity threshold.
 
 
 \zrd{Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disk. The number of probe heads is set to three. 
-Without it, all 32 heads must load 128 key vectors and later 32 \(k,v\) vectors, totaling 160 vectors. 
-With \techa{}, only 12 key vectors from three probe heads are first loaded. The GPU computes attention and measures probe-head similarity. 
+Without it, all 32 heads must load 128 \textit{key} vectors and later 32 \(k,v\) vectors, totaling 160 vectors. 
+With \techa{}, only 12 \textit{key} vectors from three probe heads are first loaded. The GPU computes attention and measures probe-head similarity. 
 If the similarity exceeds the threshold, only one token index deemed most important by all probe heads \(\{x\}\) is used, and 64 \(k,v\) vectors are loaded and just 76 vectors in total. 
 When the threshold is unmet, the process reverts to the standard mode, though this occurs in fewer than 20\% of layers. 
 Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectively reduces I/O load across most layers. }
