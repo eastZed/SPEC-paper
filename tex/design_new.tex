@@ -39,12 +39,15 @@ Figure~\ref{fig:ob3}(a) shows the probability that a token remains important in 
 %\zrdnew{To address these issues, we propose a more accurate and flexible guidance-based prefetching method that efficiently prefetches important KVs for the next layer while overlapping prefetching with computation. We studied the important tokens identified by the method mentioned in \cref{sec:techa} and found that the distribution of important tokens in adjacent layers is highly similar. Moreover, the index sets with higher importance rankings exhibit higher similarity. This similarity is quantified using the Jaccard index.}
 
 \cp{
-\textbf{Design.} Loading important KVs during inference lies on the critical path and therefore introduces noticeable latency, as shown by the K and V loading in Figure~\ref{fig:simiload-ttft}(b).
-To alleviate this overhead, we explore using prefetching to hide the I/O cost by overlapping data loading with computation. 
-However, this presents a key challenge: the important tokens for the next transformer layer are unknown until the current layer’s computation completes, making it difficult to determine which KVs to prefetch in advance. 
-To solve this challenge, based on \textit{Observation~III}, we propose the \technew{} mechanism, which exploits the strong similarity of important token index sets across adjacent layers. 
-During the computation of the current layer, \technew{} asynchronously prefetches the important KVs of the next layer into GPU memory by approximating the next layer’s important tokens with those identified in the current layer. 
-This layer-aware prefetching effectively reduces I/O latency and achieves higher accuracy than random prefetching.}
+\textbf{Design.} 
+As shown in Figure~\ref{fig:simiload-ttft}(b), dependencies among probe head key loading, token selection, and KV loading limit computation–I/O overlap, leaving partial idle periods on the GPU stream. 
+These dependencies arise because the system must first load the probe head keys to identify important tokens before determining which corresponding keys and values need to be fetched. 
+To mitigate this overhead, we employ prefetching to overlap data loading with computation. 
+However, a key challenge remains: the important tokens for the next transformer layer cannot be identified until the current layer’s computation completes, making it difficult to determine which KVs to prefetch in advance.}
+
+\cp{To solve this challenge, based on \textit{Observation~III}, we propose the \technew{} mechanism, which exploits the strong similarity of important token index sets across adjacent layers. 
+During the computation of the current layer, \technew{} asynchronously prefetches the important KVs of the next layer into GPU memory. 
+By leveraging the importance information from the current layer, it approximates the distribution of important tokens in the next layer, enabling informed prefetching and reducing I/O latency.}
 
 
 Existing LLM serving systems often face high inference latency due to inefficient KV management across GPU, CPU, and disk. 

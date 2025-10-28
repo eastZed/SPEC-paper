@@ -274,15 +274,28 @@ Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectiv
 \begin{figure}
 	\centering
 	\includegraphics[width=3.4in]{simiload-ttft.pdf}
-	\caption{The TTFTs with and without \techa{}. Assume the LLM model consists of three transformer layers. The numbers inside the rectangles represent the layer index.}
+	\caption{\cp{
+			Comparison of TTFTs without \techa{} (a), with \techa{} (b), and with prefetching (c). 
+			The LLM consists of three transformer layers, where the numbers in the rectangles denote layer indices. 
+			In (b), the black dashed arrows indicate the dependency among the three operations, which prevents overlapping and causes idle periods on the GPU stream. 
+			Prefetching in (c) alleviates this issue by overlapping KV loading with computation, further reducing TTFT.}}
 	\label{fig:simiload-ttft}
 \end{figure}
 
 
-Figure~\ref{fig:simiload-ttft} compares the timelines for completing three transformer layers with and without this technique. 
-Without \techa{} (Figure~\ref{fig:simiload-ttft}(a)), loading many keys causes GPU idle time and prolongs the inference process. 
-With \techa{} enabled (Figure~\ref{fig:simiload-ttft}(b)), when the probe heads’ similarity exceeds the threshold, loading only the keys from the probe heads (in red) shortens GPU wait time. 
-Moreover, loading a subset of keys for attention weight calculations reduces the time for generating important token index sets (in green), resulting in a shorter overall TTFT.
+\cp{Figure~\ref{fig:simiload-ttft} compares the timelines for completing three transformer layers with and without \techa{}. 
+Without \techa{} (Figure~\ref{fig:simiload-ttft}(a)), loading all keys causes significant GPU idle time, leading to a prolonged inference process. 
+With \techa{} enabled (Figure~\ref{fig:simiload-ttft}(b)), when the similarity among probe heads exceeds the threshold, only the keys from the selected probe heads (in red) are first loaded to identify important tokens. 
+After obtaining the important token positions, the system selectively loads only the corresponding keys and values instead of all tokens, effectively reducing I/O overhead. 
+This selective loading also shortens the time required for generating important token index sets (in green), resulting in a shorter overall TTFT.}
+
+%However, as indicated by the black dashed arrows, dependencies among key loading, token selection, and value loading still limit the degree of overlap between computation and I/O, resulting in partial idle periods on the GPU stream.
+
+
+%Figure~\ref{fig:simiload-ttft} compares the timelines for completing three transformer layers with and without this technique. 
+%Without \techa{} (Figure~\ref{fig:simiload-ttft}(a)), loading many keys causes GPU idle time and prolongs the inference process. 
+%With \techa{} enabled (Figure~\ref{fig:simiload-ttft}(b)), when the probe heads’ similarity exceeds the threshold, loading only the keys from the probe heads (in red) shortens GPU wait time. 
+%Moreover, loading a subset of keys for attention weight calculations reduces the time for generating important token index sets (in green), resulting in a shorter overall TTFT.
 
 
 \noindent \textbf{Hyperparameter decisions.}
