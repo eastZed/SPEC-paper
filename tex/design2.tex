@@ -10,13 +10,14 @@
 % We introduce the \techba{} method to tackle the problem of loading and caching unimportant KVs alongside important ones within the same chunk. The essence is to enhance the concentration of important KVs in a chunk by periodically reordering and consolidating them into new chunks, which minimizes bandwidth wastage during read operations.
 % This reorganization and repacking is scheduled at regular intervals (e.g., every 10 minutes in our configuration), aligned with the average importance of each token over the cycle. The entire operation is conducted asynchronously, ensuring that the time invested does not interfere with the primary I/O operations.
 
-We present the \techba{} method to address the unnecessary loading of unimportant KVs during important KV retrieval. By periodically reorganizing and repacking important KVs into denser chunks, this approach optimizes read efficiency and reduces bandwidth waste.
-Scheduled at regular intervals (e.g., every 10 minutes), this process is based on the average token importance and operates asynchronously to avoid disrupting the main I/O flow.
-
+%原文%We present the \techba{} method to address the unnecessary loading of unimportant KVs during important KV retrieval. By periodically reorganizing and repacking important KVs into denser chunks, this approach optimizes read efficiency and reduces bandwidth waste.
+%Scheduled at regular intervals (e.g., every 10 minutes), this process is based on the average token importance and operates asynchronously to avoid disrupting the main I/O flow.
+\zrd{We present the \techba{} method to address the unnecessary loading of unimportant KVs during important KV retrieval. By periodically reorganizing and repacking important KVs into denser chunks, this approach optimizes read efficiency and reduces bandwidth waste.
+	Scheduled at regular intervals (e.g., every 10 minutes), this process is based on the average token importance and operates asynchronously to avoid disrupting the main I/O flow.}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=3.4in, height=1.3in]{reorder.pdf}
+	\includegraphics[width=3.4in, height=1.2in]{reorder.pdf}
 %	\vspace{-0.1in}
 	\caption{Comparison of the number of chunks read before and after the token sequence is reordered. The orange (blue) rectangles represent important (unimportant) keys.}
 	\label{fig:reordering}
@@ -25,8 +26,12 @@ Scheduled at regular intervals (e.g., every 10 minutes), this process is based o
 
 %To illustrate this process, consider an example where a prefix consists of four tokens [t0, t1, t2, t3], and the existing system stores keys for two adjacent tokens in a single chunk. Suppose each chunk contains one important key and one unimportant key.
 %Figure~\ref{fig:reordering}(a) demonstrates that, without the \techba{} technique, both chunks must be loaded from disk into CPU memory to retrieve the two important keys \{t0, t3\}. This leads to unimportant keys consuming valuable read bandwidth and cache space. In contrast, with \techba{} enabled (as shown in Figure~\ref{fig:reordering}(b)), the four tokens are first reordered in a descending order of importance, and then the keys of two adjacent reordered tokens (i.e., [t0, t3] and [t1, t2]) are packed into a single chunk. This allows only one chunk to be loaded to access all two important keys, thereby reducing the amount of data read from the disk.
-\fvc{
-To illustrate, consider a prefix [t0, t1, t2, t3] where the existing system stores keys for two adjacent tokens in one chunk, each containing one important and one unimportant key. Without \techba{} (Figure~\ref{fig:reordering}(a)), both chunks must be loaded to retrieve the important keys \{t0, t3\}, wasting read bandwidth and cache space on unimportant keys. With \techba{} (Figure~\ref{fig:reordering}(b)), tokens are reordered by importance, and keys of adjacent reordered tokens ([t0, t3] and [t1, t2]) are packed into one chunk. This enables loading just one chunk to access all important keys, reducing disk read data.
+%原文\fvc{
+%To illustrate, consider a prefix [t0, t1, t2, t3] where the existing system stores keys for two adjacent tokens in one chunk, each containing one important and one unimportant key. Without \techba{} (Figure~\ref{fig:reordering}(a)), both chunks must be loaded to retrieve the important keys \{t0, t3\}, wasting read bandwidth and cache space on unimportant keys. With \techba{} (Figure~\ref{fig:reordering}(b)), tokens are reordered by importance, and keys of adjacent reordered tokens ([t0, t3] and [t1, t2]) are packed into one chunk. This enables loading just one chunk to access all important keys, reducing disk read data.
+%}
+\zrd{
+	To illustrate, consider a prefix [t0, t1, t2, t3, t4, t5] where the existing system stores keys for two adjacent tokens in one chunk, each containing one important and one unimportant key. Assume the importance ranking among the important keys is $t_0 \succ t_4 \succ t_3$.
+	 When loading, without \techba{} (Figure~\ref{fig:reordering}(a)), all chunks must be loaded to retrieve the important keys \{t0, t3, t4\}, wasting read bandwidth and cache space on unimportant keys. With \techba{} (Figure~\ref{fig:reordering}(b)), tokens are reordered by importance, and keys of adjacent reordered tokens ([t0, t3] and [t1, t2]) are packed into one chunk. This enables loading just one chunk to access all important keys, reducing disk read data.
 }
 
 %\noindent \textbf{Metadata adjustment.}
