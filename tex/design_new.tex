@@ -7,9 +7,14 @@
 \noindent
 \zrdnew{
 	\textbf{Observation III: }
-	{Important token indices exhibit strong consistency across adjacent layers of an LLM.} To further analyze the distribution of important token indices, we examine the similarity of the top 25\% important token sets across adjacent layers for different models. As shown in Figure~\ref{fig:ob3}(a), there are two key observations: (1) the important tokens exhibit strong consistency across layers, and (2) tokens with higher importance in one layer are more likely to remain important in the subsequent layer.
-	Specifically, xxxx.}
-% 把图中的一些趋势或者例子挑出来说一下。
+%	{Important token indices exhibit strong consistency across adjacent layers of an LLM.} To further analyze the distribution of important token indices, we examine the similarity of the top 25\% important token sets across adjacent layers for different models. As shown in Figure~\ref{fig:ob3}(a), there are two key observations: (1) the important tokens exhibit strong consistency across layers, and (2) tokens with higher importance in one layer are more likely to remain important in the subsequent layer.
+We summarize two key observations regarding the stability of token importance across layers: 
+(1) tokens with higher importance scores in the current layer are  more likely to remain important in the subsequent layer, while those with lower scores tend to lose importance rapidly; 
+and (2) the probability of a token remaining important in the next layer is positively correlated with its importance score in the current layer. Tokens with higher importance values are more likely to stay important, while those with lower importance values have a decreasing probability of remaining important in the next layer.
+To illustrate these observations, 
+Figure~\ref{fig:ob3}(a) shows the probability that a token remains important in the next layer. We take the top 25\% tokens with the highest importance values as important tokens. The x-axis represents the top $n$\% of these important tokens ranked by importance, and the y-axis shows the proportion that remain important in the next layer, averaged over 32 layers. Specifically, xxx.
+}
+
 
 
 %
@@ -34,7 +39,7 @@
 %\zrdnew{To address these issues, we propose a more accurate and flexible guidance-based prefetching method that efficiently prefetches important KVs for the next layer while overlapping prefetching with computation. We studied the important tokens identified by the method mentioned in \cref{sec:techa} and found that the distribution of important tokens in adjacent layers is highly similar. Moreover, the index sets with higher importance rankings exhibit higher similarity. This similarity is quantified using the Jaccard index.}
 
 \cp{
-Loading important KVs during inference lies on the critical path and thus introduces non-negligible latency, as shown in Figure~\ref{}. 
+\textbf{Design.} Loading important KVs during inference lies on the critical path and therefore introduces noticeable latency, as shown by the K and V loading in Figure~\ref{fig:simiload-ttft}(b).
 To alleviate this overhead, we explore using prefetching to hide the I/O cost by overlapping data loading with computation. 
 However, this presents a key challenge: the important tokens for the next transformer layer are unknown until the current layer’s computation completes, making it difficult to determine which KVs to prefetch in advance. 
 To solve this challenge, based on \textit{Observation~III}, we propose the \technew{} mechanism, which exploits the strong similarity of important token index sets across adjacent layers. 
