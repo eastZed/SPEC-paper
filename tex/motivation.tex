@@ -79,7 +79,7 @@ During inference, prefetching can be performed by loading the KVs required for t
 
 \zrdnew{A straightforward alternative is to randomly prefetch KVs for the next layer without considering their importance, 
 	but this approach suffers from low prefetch precision and loads numerous unimportant tokens’ KVs into GPU memory, wasting I/O bandwidth.
-Instead of a figure, we give a simple calculation. Suppose each layer marks the top $\alpha$ fraction of tokens as \emph{important} for the next layer (e.g., $\alpha=25\%$), and the prefetch budget also allows selecting an $\alpha$ fraction of tokens uniformly at random. Let $N$ be the number of tokens in the layer. The expected overlap between the randomly prefetched set ($\alpha N$ tokens) and the truly important set ($\alpha N$ tokens) is
+ Suppose each layer marks the top $\alpha$ fraction of tokens as \emph{important} for the next layer (e.g., $\alpha=25\%$), and the prefetch budget also allows selecting an $\alpha$ fraction of tokens uniformly at random. Let $N$ be the number of tokens in the layer. The expected overlap between the randomly prefetched set ($\alpha N$ tokens) and the truly important set ($\alpha N$ tokens) is
 \[
 \mathbb{E}[|{\rm Rand}\cap{\rm Imp}|] \;=\; (\alpha N)\cdot\frac{\alpha N}{N}\;=\;\alpha^2 N.
 \]

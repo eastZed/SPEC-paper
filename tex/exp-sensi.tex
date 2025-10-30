@@ -23,6 +23,10 @@
 % Therefore, we set alpha to 0.6 to achieve lower TTFT while maintaining high inference accuracy.
 Figure~\ref{fig:sensitivity_alpha} depicts the impact of varying the alpha value on inference accuracy and TTFT, ranging from 0 to 2. The findings indicate that while an increased alpha reduces TTFT, it marginally affects inference accuracy due to a lowered similarity threshold, leading to less KV loading. This trend is consistent across datasets. Thus, we optimize alpha at 0.6 for a balance between low TTFT and high inference precision.
 
+\zrdnew{\noindent \textbf{Alpha value of similarity threshold.} 
+
+}
+
 \noindent \textbf{Chunk size.} 
 % Figure~\ref{fig:sens_ck} shows the TTFT results of the current state-of-the-art system and \pname{} as the chunk size is adjusted from 16 to 256. Since chunk size does not affect accuracy, we omit it from the figure. 
 % We observe that across different chunk sizes, \pname{} consistently outperforms
