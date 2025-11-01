@@ -55,7 +55,7 @@ In contrast, Figure~\ref{fig:simiload-ttft}(c) shows that using Layer~0’s impo
 (2) Another challenge arises when not all required data are successfully prefetched before inference, leading to missing inputs during computation and requiring a remedy mechanism.}
 
 \cp{
-To mitigate the first issue, we design a Dual-tier prefetching (DTP) mechanism that controls the proportion of data fetched from different storage tiers.
+To mitigate the first issue, we design a dual-tier prefetching (DTP) mechanism that controls the proportion of data fetched from different storage tiers.
 Let $T_{\text{comp}}$ be the computation window during which data loading overlaps with GPU computation.
 DTP divides this window by a ratio $\delta$: $\delta T_{\text{comp}}$ is allocated for memory loading and $(1-\delta)T_{\text{comp}}$ for SSD loading.
 Within each tier, tokens are sorted by predicted importance and prefetched in descending order until the respective budget is used up.
