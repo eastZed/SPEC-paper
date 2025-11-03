@@ -61,10 +61,10 @@ DTP divides this window by a ratio $\delta$: $\delta T_{\text{comp}}$ is allocat
 Within each tier, tokens are sorted by predicted importance and prefetched in descending order until the respective budget is used up.
 This confines SSD reads while maintaining effective overlap between I/O and computation.
 Extensive experiments across various workloads show that $\delta=0.8$ consistently achieves the best inference efficiency, as shown in Figure~\ref{}. 
-Thus, \pname{} uses a fixed $\delta=0.8$ in all experiments, lwhile adaptive tuning is left for future work.
+Thus, \pname{} uses a fixed $\delta=0.8$ in all experiments, while adaptive tuning is left for future work.
 }
 
 \cp{
-To ensure all required data are available during inference, we introduce a lightweight recovery mechanism. After each prefetching window, the system performs a Head-\(K\) loading operation for the next layer to validate prefetched results and fetch missing KVs, as shown by the red-bordered KV loading in Figure~\ref{fig:simiload-ttft}(c). Token selection is also performed at each layer to update the importance distribution based on the latest computation, ensuring that subsequent prefetching remains accurate. Additionally, incorrectly prefetched data are retained and reused during inference to avoid unnecessary I/O waste.
+To ensure all required data are available during inference, we introduce a lightweight recovery mechanism. After each prefetching window, the system performs a Head-\(K\) loading operation for the next layer to validate prefetched results and fetch missing important KVs, as shown by the red-bordered KV loading in Figure~\ref{fig:simiload-ttft}(c). Token selection is also performed at each layer to update the importance distribution based on the latest computation, ensuring that subsequent prefetching remains accurate. Additionally, incorrectly prefetched data are retained and reused during inference to avoid unnecessary I/O waste.
 }
 
