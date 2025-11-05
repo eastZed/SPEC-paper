@@ -50,21 +50,41 @@ For example,
 as illustrated in Figure~\ref{fig:simiload-ttft}(b), KV loading in Layer~1 cannot begin until token selection completes, causing GPU stalls. 
 In contrast, Figure~\ref{fig:simiload-ttft}(c) shows that using Layer~0’s importance information to prefetch Layer~1’s KVs during computation effectively hides I/O latency and reduces idle time.}
 
-\cp{A straightforward approach is to prefetch data in descending order of importance scores from the previous layer. However, this strategy introduces two major issues.
-(1) The predicted importance is not always accurate (in Figure~\ref{}). Incorrectly prefetched data from SSD can waste substantial parallel I/O time, so the amount of SSD-prefetched data must be carefully controlled.
-(2) Another challenge arises when not all required data are successfully prefetched before inference, leading to missing inputs during computation and requiring a remedy mechanism.}
+Two issues must be addressed for efficient prefetching. 
+First, since approximating the next layer’s important token distribution using that of the current layer is inherently imprecise, prefetching becomes speculative, making it crucial to improve its accuracy. 
+Second, the I/O operations for prefetching must be well overlapped with computation. 
+If computation takes longer than prefetching, the I/O bandwidth remains underutilized; conversely, if prefetching exceeds computation time, speculative I/O appears on the critical path, and any mispredicted prefetches can introduce additional latency. 
 
-\cp{
-To mitigate the first issue, we design a dual-tier prefetching (DTP) mechanism that controls the proportion of data fetched from different storage tiers.
-Let $T_{\text{comp}}$ be the computation window during which data loading overlaps with GPU computation.
-DTP divides this window by a ratio $\delta$: $\delta T_{\text{comp}}$ is allocated for memory loading and $(1-\delta)T_{\text{comp}}$ for SSD loading.
-Within each tier, tokens are sorted by predicted importance and prefetched in descending order until the respective budget is used up.
-This confines SSD reads while maintaining effective overlap between I/O and computation.
-Extensive experiments across various workloads show that $\delta=0.8$ consistently achieves the best inference efficiency, as shown in Figure~\ref{}. 
-Thus, \pname{} uses a fixed $\delta=0.8$ in all experiments, while adaptive tuning is left for future work.
-}
+To tackle the first issue, based on \textit{Observation~III}, we prioritize prefetching the KVs corresponding to tokens that have higher importance in the current layer, as these tokens are more likely to remain important at the same indices in the subsequent layer. 
 
-\cp{
-To ensure all required data are available during inference, we introduce a lightweight recovery mechanism. After each prefetching window, the system performs a Head-\(K\) loading operation for the next layer to validate prefetched results and fetch missing important KVs, as shown by the red-bordered KV loading in Figure~\ref{fig:simiload-ttft}(c). Token selection is also performed at each layer to update the importance distribution based on the latest computation, ensuring that subsequent prefetching remains accurate. Additionally, incorrectly prefetched data are retained and reused during inference to avoid unnecessary I/O waste.
-}
+To address the second issue, it is essential to ensure that computation and prefetching I/O are well aligned in time. 
+Achieving this requires accurate estimation of both computation and I/O durations. 
+For computation, we observe that during the prefill stage of inference, the computational workload across transformer layers is approximately uniform. 
+Therefore, we use the measured computation time of the first layer as an estimate for all subsequent layers, which serves as the time budget for prefetching. 
+
+For I/O estimation, key and value vectors are stored on a per-chunk basis, where each chunk contains multiple token vectors (e.g., \texttt{chunksize}=64). 
+Given a set of target token IDs, we first map each token to its corresponding chunk and identify the storage medium. 
+Chunks on SSD are first \texttt{mmap}-loaded into CPU memory, after which the required K/V vectors are indexed and transferred to GPU memory via PCIe. 
+For chunks already in CPU memory, the K/V vectors are directly fetched and transferred over PCIe, while GPU-resident chunks are accessed directly. 
+Our profiling shows that the latency of fetching a chunk’s K/Vs remains stable within each storage tier and follows a near-normal distribution with low variance, indicating predictable performance. 
+We thus use the average per-chunk latency for each medium as a profiling result and sequentially fill the prefetching window by loading chunks until the estimated budget is fully utilized. 
+This approach effectively balances computation and I/O, ensuring that speculative prefetching remains hidden behind ongoing GPU execution.
+
+%\cp{A straightforward approach is to prefetch data in descending order of importance scores from the previous layer. However, this strategy introduces two major issues.
+%(1) The predicted importance is not always accurate (in Figure~\ref{}). Incorrectly prefetched data from SSD can waste substantial parallel I/O time, so the amount of SSD-prefetched data must be carefully controlled.
+%(2) Another challenge arises when not all required data are successfully prefetched before inference, leading to missing inputs during computation and requiring a remedy mechanism.}
+%
+%\cp{
+%To mitigate the first issue, we design a dual-tier prefetching (DTP) mechanism that controls the proportion of data fetched from different storage tiers.
+%Let $T_{\text{comp}}$ be the computation window during which data loading overlaps with GPU computation.
+%DTP divides this window by a ratio $\delta$: $\delta T_{\text{comp}}$ is allocated for memory loading and $(1-\delta)T_{\text{comp}}$ for SSD loading.
+%Within each tier, tokens are sorted by predicted importance and prefetched in descending order until the respective budget is used up.
+%This confines SSD reads while maintaining effective overlap between I/O and computation.
+%Extensive experiments across various workloads show that $\delta=0.8$ consistently achieves the best inference efficiency, as shown in Figure~\ref{}. 
+%Thus, \pname{} uses a fixed $\delta=0.8$ in all experiments, while adaptive tuning is left for future work.
+%}
+%
+%\cp{
+%To ensure all required data are available during inference, we introduce a lightweight recovery mechanism. After each prefetching window, the system performs a Head-\(K\) loading operation for the next layer to validate prefetched results and fetch missing important KVs, as shown by the red-bordered KV loading in Figure~\ref{fig:simiload-ttft}(c). Token selection is also performed at each layer to update the importance distribution based on the latest computation, ensuring that subsequent prefetching remains accurate. Additionally, incorrectly prefetched data are retained and reused during inference to avoid unnecessary I/O waste.
+%}
 

@@ -276,9 +276,10 @@ Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectiv
 	\includegraphics[width=3.4in]{simiload-ttft.pdf}
 	\caption{\cp{
 			Comparison of TTFTs without \techa{} (a), with \techa{} (b), and with prefetching (c). 
-			The LLM consists of three transformer layers, where the numbers in the rectangles denote layer indices. 
-			In (b), the black dashed arrows indicate the dependency among the three operations, which prevents overlapping and causes idle periods on the GPU stream. 
-			Prefetching in (c) alleviates this issue by overlapping KV loading with computation, further reducing TTFT.}}
+			Assume the LLM model consists
+			of three transformer layers. The numbers inside the rectangles
+			represent the layer index.
+			The black dashed arrows in(b) indicate the dependency among operations.}}
 	\label{fig:simiload-ttft}
 \end{figure}
 
