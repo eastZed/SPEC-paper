@@ -95,37 +95,16 @@ may lower the GPU cache hit ratio for important key-value pairs, thus increasing
 PCIe traffic.
 
 \noindent \textbf{Score-based cache admission.}
-To enhance cache efficiency, we introduce the importance-aware cache admission policy.
-% \techbb{} policy.
-This policy assigns a score to each chunk based on its access frequency and the
-proportion of important keys or values it holds. Chunks with higher scores are
-preferentially cached in GPU memory, whereas those with lower scores are stored
-in CPU memory. This approach boosts the GPU cache hit ratio and minimizes data
-transfers between CPU and GPU. The importance ratio is dynamically calculated as
-a moving average, updating online after each chunk access.
+To enhance cache efficiency, we introduce an importance-aware cache admission policy that assigns each chunk a score combining its access frequency and the proportion of important keys or values it contains.
+Chunks with higher scores are cached in GPU memory, while lower-scored ones stay in CPU memory, improving the GPU cache hit ratio and reducing CPU–GPU data transfers.
+The importance ratio is updated online using a moving average after each access, allowing dynamic adaptation to workload changes.
+Since chunks often contain both important and less important tokens, this scoring balances access frequency and data value to prioritize high-impact chunks.
 
+For example, consider two key chunks: chunk 1 from application A and chunk 2 from application B.
+Application A’s request frequency is 1.5× higher than B’s, but chunk 1 holds only one important key (50\%), while chunk 2 holds two (100\%).
+As shown in Figure \ref{fig:score_cache}(a), traditional caching stores chunk 1 in GPU memory based on frequency, requiring 20 important keys to be transferred.
+By contrast, our policy computes scores of 0.75 (1.5 × 50\%) for chunk 1 and 1.0 (1 × 100\%) for chunk 2, so chunk 2 is cached in GPU memory (Figure \ref{fig:score_cache}(b)), reducing transfers to 15 and improving overall cache efficiency.
 
-%\begin{comment}
-
-
-% For example, assume that key chunk 1 and key chunk 2 come from prefixes requested by application A and application B, respectively, and only one chunk can be stored in the GPU. Since the number of past requests from application A is 1.5 times that of application B, chunk 1 is accessed more frequently than chunk 2. However, only one key (i.e., 50\%) in chunk 1 is important, while both keys (i.e., 100\%) in chunk 2 are important. 
-% As shown in Figure~\ref{fig:score_cache}(a), the existing system would place chunk 1 in the GPU and chunk 2 in the CPU because chunk 1 has a higher access frequency. When 15 new requests from application A and 10 new requests from application B arrive, this placement would result in the need to transfer 10 $\times$ 2 = 20 important keys from CPU to GPU. 
-% However, considering the importance ratio, chunk 1's score would be 1.5 $\times$ 50\% = 0.75, and chunk 2's score would be 1 $\times$ 100\% = 1. Thus, chunk 2 would be placed in the GPU, as shown in Figure~\ref{fig:score_cache}(b), which would reduce the data transfer during the servicing of the 25 new requests to only 15 $\times$ 1 = 15 important keys.
-%\end{comment}
-
-For instance, suppose key chunk 1 from application A and key chunk 2 from
-application B are contenders for the limited GPU memory, with application A's
-request frequency being 1.5 times that of B, making chunk 1 more frequently
-accessed. However, chunk 1 contains only one important key (50\%), while chunk 2
-contains two important keys (100\%).
-As depicted in Figure~\ref{fig:score_cache}(a), traditional systems would cache
-chunk 1 in the GPU memory due to its higher access frequency, relegating chunk 2 to
-the CPU. With 15 new requests from A and 10 from B, this approach would
-necessitate transferring 20 important keys from CPU to GPU.
-By contrast, factoring in the importance ratio, chunk 1 scores 0.75 (1.5 $\times$
-50\%), and chunk 2 scores 1 (1 $\times$ 100\%). Thus, our method caches chunk 2 in
-the GPU memory, as shown in Figure~\ref{fig:score_cache}(b), cutting the transfer of
-important keys to just 15.
 
 \begin{figure}
 	\centering
@@ -179,11 +158,9 @@ important keys to just 15.
 % The top elements in two heaps point to the chunks with the lowest scores in the GPU and CPU caches respectively. 
 % %We ensure that chunks in the GPU and CPU caches are non-redundant to maximize the amount of cached data. Additionally, 
 % We ensure that all chunks' replicas are kept on disk to avoid I/O latency when evicting chunks from the CPU to disk.
-We employ score-based cache replacement policy to oversee GPU and CPU caches, utilizing two min-heaps in CPU memory to manage chunks in both caches and facilitate eviction. The heaps' tops indicate the lowest-scored chunks in the GPU and CPU caches, respectively. To optimize data caching, we ensure non-redundancy between the GPU and CPU caches. Additionally, we maintain all chunk replicas on disk, thus eliminating I/O latency when chunks are evicted from CPU to disk.
+We employ a score-based cache replacement policy to coordinate GPU and CPU caches. Two min-heaps in CPU memory track chunks in each cache, with the top entries representing the lowest-scored chunks eligible for eviction. To avoid redundancy, each chunk resides in only one cache, while all replicas are preserved on disk to eliminate I/O latency during eviction.
 
-Upon receiving a new request, \pname{} first identifies reusable important tokens and locates their associated chunks. If the chunk is already in the GPU cache, \pname{} utilizes the key or value vectors for inference and updates the chunk's score, retaining it in the GPU cache. If the chunk is in the CPU cache, after transferring the vectors to the GPU, \pname{} updates and compares the chunk's score with the GPU cache's lowest. If superior, it replaces the lowest-scored chunk in the GPU cache; otherwise, it stays in the CPU cache.
-Should the chunk reside on disk, \pname{} loads it into CPU cache, transfers the necessary vectors to the GPU, and updates the chunk's score. This new score is then assessed against the lowest scores in both caches to decide whether the chunk should be promoted to the GPU cache, remain in the CPU cache, or stay on disk.
-
+When a new request arrives, \pname{} locates chunks containing reusable important tokens. If a chunk is already in the GPU cache, its key/value vectors are used directly and its score is updated. If it resides in the CPU cache, the vectors are transferred to the GPU, and the chunk’s score is compared with the lowest in the GPU cache—replacing it only if higher. For chunks on disk, \pname{} loads them into CPU memory, fetches the required vectors, and evaluates their updated scores to determine whether they should be promoted to GPU memory, remain in CPU cache, or stay on disk.
 
 
 %\subsubsection{\techBb{}}
