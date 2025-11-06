@@ -19,7 +19,7 @@
 	\centering
 	\includegraphics[width=3.4in, height=1.2in]{reorder.pdf}
 %	\vspace{-0.1in}
-	\caption{Comparison of the number of chunks read before and after the token sequence is reordered. The orange (blue) rectangles represent important (unimportant) keys.}
+	\caption{\cp{Comparison of the number of chunks read before and after the token sequence is reordered. The orange (blue) rectangles represent important (unimportant) keys.}}
 	\label{fig:reordering}
 	\vspace{-0.1in}
 \end{figure}
@@ -37,7 +37,7 @@
 	\cp{
 	With \techba{} as in IMPRESS (Figure~\ref{fig:reordering}(b)), tokens are reordered by importance but packed into chunks according to token IDs (e.g., $[t_0, t_3]$, $[t_1, t_2]$, $[t_4, t_5]$). 
 	This organization reduces redundant reads but limits prefetch efficiency when I/O time is constrained. 
-	For example, if the prefetching time window allows prefetching only one SSD chunk, the ideal prefetching order based on importance would retrieve $t_0$ and  $t_4$. 
+	For example, if the prefetching time window allows prefetching only one SSD chunk, the ideal prefetching order based on importance would retrieve $t_0$ and  $t_4$, as the prefetch policy in \S\ref{sec:techc}. 
 	However, under the data layout of IMPRESS, $t_0$ and $t_4$ are stored in different chunks, while $t_0$ and $t_3$ share one. 
 	As a result, since $t_0$ and $t_3$ share the same chunk, fetching the most important key $t_0$ also forces $t_3$ to be loaded together, which prevents $t_4$ from being prefetched within the time limit.
 	In contrast, \pname{} (Figure~\ref{fig:reordering}(c)) organizes chunks by importance ranking (e.g., $[t_0, t_4]$, $[t_2, t_3]$, $[t_1, t_5]$), allowing the prefetch of $\{t_0, t_4\}$ under the same budget and thereby maximizing prefetch efficiency.
