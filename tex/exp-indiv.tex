@@ -26,7 +26,7 @@
 %version that further incorporates the \techbb{} strategy on top of
 %\textit{+RO}. 
 \fvc{
-Figure~\ref{fig:indiv} shows the impact of each optimization. Using the current SOTA system \textit{AS+H2O+LFU} as the baseline (TTFT normalized to one), \textit{+ITF} adds \techa{} for loading important KVs, \textit{+RO} enables \techba{} on \textit{+ITF}, and \textit{All} incorporates \techbb{} on \textit{+RO}.
+Figure~\ref{fig:indiv} shows the impact of each optimization. \zrdnew{Using the \zrdnew{previous} SOTA system \textit{AS+H2O+LFU} as the baseline (TTFT normalized to one), \textit{+ITF} adds \techa{} for loading important KVs, \textit{+P} uses \technew{} to prefetch next layer's important KVs, \textit{+RO} enables \techba{} on \textit{+P}, and \textit{All} incorporates \techbb{} on \textit{+RO}.}
 }
 %Due to space limitations, we only present the results of
 %two models and two datasets.
@@ -35,7 +35,7 @@ Figure~\ref{fig:indiv} shows the impact of each optimization. Using the current 
 %individual technique in \pname{}. 
 %Second, the contributions of different techniques vary across models and datasets. For instance, in OPT-30B on the RTE dataset, the respective contributions of the three techniques are 60\%, 30\%, and 10\%. In contrast, on the COPA dataset with OPT-13B, the contributions are 36\%, 8\%, and 56\%, respectively.
 \fvc{
-We observe that each optimization reduces TTFT, with \textit{All} achieving the shortest TTFT, showing the effectiveness of \pname{}'s individual techniques. Besides, technique contributions vary across models and datasets. For example, in OPT-30B on RTE, the contributions of the three techniques are 60\%, 30\%, and 10\%, while on COPA with OPT-13B, they are 36\%, 8\%, and 56\%.
+We observe that each optimization reduces TTFT, with \textit{All} achieving the shortest TTFT, showing the effectiveness of \pname{}'s individual techniques. Besides, technique contributions vary across models and datasets. For example, in OPT-30B on RTE, the contributions of the three techniques are \zrdnew{x}\%, \zrdnew{x}\%, and \zrdnew{x}\%, while on COPA with OPT-13B, they are \zrdnew{x}\%, \zrdnew{x}\%, and \zrdnew{x}\%.
 }
 
 
@@ -55,7 +55,7 @@ We observe that each optimization reduces TTFT, with \textit{All} achieving the 
 % explains why \textit{All} achieves the lowest TTFT.
 
 Figure~\ref{fig:indiv_a} shows the average KV loading ratio per layer for OPT-30B on the PIQA dataset using the \textit{+ITF} system, which dynamically adjusts KV loading to optimize the trade-off between accuracy and TTFT.
-Figure~\ref{fig:indiv_b} indicates that enabling \techba{} results in an average 1.2$\times$ reduction in loaded chunks, as it consolidates important keys and values into fewer chunks.
+Figure~\ref{fig:indiv_b} indicates that enabling \techba{} results in an average \zrdnew{x}$\times$ reduction in loaded chunks, as it consolidates important keys and values into fewer chunks.
 %, streamlining the loading process for important token KVs.
 Figure~\ref{fig:indiv_c} shows that \techbb{} boosts the average GPU hit ratio from 68\% to 80\% across four datasets, thereby reducing PCIe data transfers.
 %and contributing to the lowest TTFT in the \textit{All} configuration.

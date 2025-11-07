@@ -27,7 +27,7 @@ The average number of tokens in the request prefixes across the four datasets ra
 }
 
 \noindent \textbf{Baseline systems.}
-We compare \pname{} with four baselines.
+We compare \pname{} with six baselines.
 (1) \textit{ReComp}~\cite{alluneed-nips17}: It recomputes all prefix KVs for each request without storing or reusing them.
 (2) \textit{AS-like}~\cite{attentionstore-atc24}: AttentionStore (AS)
 asynchronously stores and loads all shared prefix KVs. Since it is not
@@ -35,14 +35,14 @@ open-source, we reimplement it to the best of our ability based on the paper. To
 ensure a fair comparison, we additionally add the GPU cache with LRU for prefix KV
 storage. Besides, we disable its scheduler-aware optimizations to make it more
 suitable for general scenarios, such as preemptive scheduling environments.
-(3) \textit{AS+H2O+LRU}: We combine AS-like with one of the state-of-the-art important KV selection systems, H2O~\cite{h2o-nips23}. Different from the AS-like, it asynchronously loads only important values rather than the full values of shared prefixes.
+(3) \textit{AS+H2O+LRU}: We combine AS-like with one of the state-of-the-art important KV selection systems, H2O~\cite{h2o-nips23}. Different from the AS-like, it loads only important values rather than the full values of shared prefixes.
 (4) \textit{AS+H2O+LFU}: It is similar to (3), but it uses LFU to manage the cache.
+\zrdnew{(5) \textit{IMP}~\cite{impress-fast25}: IMPRESS selectively loads partial keys and values, but exposees loading on the critical path.}
 %We believe both (3) and (4) represent state-of-the-art systems for accelerating prefix KV loading from storage, combining existing optimization techniques.
-In contrast, \pname{} selectively loads partial keys and values, 
+\zrdnew{In contrast, \textit{\pname{}} selectively loads keys and values,  prefetches them for next layer speculatively, 
 %enables KV reordering, and employs a score-based cache management strategy.
-\fvc{
 reorders KVs, and uses a score-based cache management strategy.
-}
+Besides, we include an \textit{Oracle} comparison, where the prefetching is perfectly accurate and completely overlaps with computation.}
 
 % \he{By default, we allocate 10GB of GPU cache and 32GB of CPU cache to avoid runtime out-of-memory errors for all the systems.}
 % The average prefix KV storage requirements for PIQA, RTE, COPA, and OpenBookQA across three models are 55 GB, 57 GB, 64 GB, and 65 GB, respectively.

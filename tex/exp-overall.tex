@@ -55,9 +55,9 @@
 
 \noindent \textbf{Model generation quality.}
 Figure~\ref{fig:overall_acc} illustrates the impact of different systems on model generation quality at various prefix KV retention ratios. 
-As ReComp and AS-like share the same accuracy, and AS+H2O+LRU and AS+H2O+LFU also show identical accuracy, we present only the accuracy of ReComp, AS+H2O+LRU, and \pname{} for simplicity.
+As ReComp and AS-like share the same accuracy, and AS+H2O+LRU and AS+H2O+LFU also show identical accuracy, we present only the accuracy of ReComp, AS+H2O+LRU, IMP, and \pname{} for simplicity.
 It shows that \pname{} has a negligible impact on accuracy across these datasets
-and models, achieving accuracy drop less than 1\% compared to ReComp or AS+H2O+LRU. In
+and models, achieving accuracy drop less than \zrdnew{x\%} compared to ReComp or AS+H2O+LRU. In
 some cases, \pname{} even slightly improves accuracy over ReComp, suggesting
 that focusing on more important tokens can sometimes enhance generation quality.
 
@@ -74,7 +74,7 @@ reduction of 0.2\% compared to ReComp.
 %First, \pname{} significantly outperforms alternative systems, with a performance improvement of 1.2$\times$ to 2.8$\times$ over the leading solutions. This advantage stems from \pname{}'s ability to cut the I/O time for loading prefix KVs into GPU memory by 1.5$\times$ to 3.8$\times$, as illustrated in Figure~\ref{fig:iotime}. Conversely, other systems suffer from longer I/O times, occasionally leading to a TTFT that surpasses even ReComp's.
 %Second, the performance gains of \pname{} fluctuate across different datasets and models. This variation is attributed to the distinct sizes of prefix KV data and the computational demands of each dataset and model. It's important to note that OPT-30B achieves a shorter TTFT than OPT-13B, as it handles shorter prefixes to prevent GPU memory overflow, which can cause out-of-memory errors.
 \fvc{
-Figure~\ref{fig:overall_ttft} shows the average TTFT per request for different systems. \pname{} outperforms alternatives, with a 1.2$\times$ to 2.8$\times$ improvement over leading solutions, due to a 1.5$\times$ to 3.8$\times$ reduction in I/O time for loading prefix KVs into GPU memory (Figure~\ref{fig:iotime}). Other systems have longer I/O times, sometimes exceeding ReComp's TTFT. Besides, \pname{}'s performance gains vary across datasets and models due to different prefix KV sizes and computational demands. Notably, OPT-30B has a shorter TTFT than OPT-13B, as it uses shorter prefixes to avoid GPU memory overflow.
+Figure~\ref{fig:overall_ttft} shows the average TTFT per request for different systems. \pname{} outperforms alternatives, with a \zrdnew{x}$\times$ to \zrdnew{x}$\times$ improvement over leading solutions, due to a \zrdnew{x}$\times$ to \zrdnew{x}$\times$ reduction in I/O time for loading prefix KVs into GPU memory (Figure~\ref{fig:iotime}). Other systems have longer I/O times, sometimes exceeding ReComp's TTFT. Besides, \pname{}'s performance gains vary across datasets and models due to different prefix KV sizes and computational demands. Notably, OPT-30B has a shorter TTFT than OPT-13B, as it uses shorter prefixes to avoid GPU memory overflow.
 }
 
 
