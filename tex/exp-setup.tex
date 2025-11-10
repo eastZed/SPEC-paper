@@ -25,7 +25,6 @@ Additionally, to test TTFT with long prefixes as in~\cite{cachegen-sigcomm24} an
 \fv{
 The average number of tokens in the request prefixes across the four datasets ranges from 4.8k to 5.7k.
 }
-
 \noindent \textbf{Baseline systems.}
 We compare \pname{} with six baselines.
 (1) \textit{ReComp}~\cite{alluneed-nips17}: It recomputes all prefix KVs for each request without storing or reusing them.
@@ -49,7 +48,6 @@ Besides, we include an \textit{Oracle} comparison, where the prefetching is perf
 % Each chunk contains 64 tokens' keys or values in all systems~\cite{chunkattention-arxiv24}.
 % We clarify that in our scenario, the entire query is always retained, unlike
 % existing KV pruning systems~\cite{h2o-nips23, infinigen-osdi24}.
-
 To prevent runtime out-of-memory errors and ensure only a portion of the prefix
 KVs are cached (the other KVs reside on SSD), we allocate 10GB of GPU cache and 32GB of CPU cache for prefix
 KVs, leaving the remaining GPU and CPU memory for storing model weights, the KV cache
@@ -60,9 +58,9 @@ On average, PIQA, RTE, COPA, and OpenBookQA require 55GB, 57GB, 64GB, and 65GB o
 
 \begin{figure*}
 	\includegraphics[width=7in, height=1in]{ttft_ds1_ds2_ds3_ds4.pdf}
-	\vspace{-0.2in}
+	\vspace{-0.1in}
 	\caption{
-		The average TTFT with various systems across four dataset and three models.}
+		\zrdnew{The average TTFT with various systems across four dataset and three models.}}
 	\label{fig:overall_ttft}
 	\vspace{-0.1in}
 \end{figure*}
