@@ -10,7 +10,7 @@ ytitleTextSize = 8
 
 legendTextSize = 8
 legendSize = 8
-legendSkip = 70
+legendSkip = 40
 
 # 定义绘画区域大小、线条粗细、轴样式
 dimension = [110, 50]
@@ -75,10 +75,10 @@ p = plotter() # 画笔
 L = legend() # 图例
 
 
-series_list = ['rc', 'as_', 'ash2o', 'ash2olfu', 'ours']
+series_list = ['rc', 'as_', 'ash2o', 'ash2olfu', 'ours', 'hyperinfer']
 #fillcolors    = ['lightblue', 'darkseagreen', 'wheat', 'lightsalmon', 'darkseagreen',  'lightgrey']
-fillcolors    = ['lightgrey',  'wheat', 'darkseagreen','lightblue',  'lightcoral'  ]
-legend_names = ['ReComp', 'AS-like', 'AS+H2O+LRU', 'AS+H2O+LFU', 'IMPRESS']
+fillcolors    = ['lightgrey',  'wheat', 'darkseagreen','lightblue','lightsalmon', 'lightcoral'  ]
+legend_names = ['ReComp', 'AS-like', 'AS+H2O+LRU', 'AS+H2O+LFU', 'IMPRESS',  'HyperInfer']
 
 
 for i in range(1, len(series_list)):
@@ -104,7 +104,7 @@ for i in range(1, len(series_list)):
 
 #### legend
 L.draw(canvas=c, coord=[d.left()-7, d.top()+7], skipnext=1, 
-     skipspace=legendSkip,hspace=4, fontsize=legendTextSize,  
+     skipspace=legendSkip,hspace=2, fontsize=legendTextSize,  
      width=legendSize, height=legendSize, order=[0, 1, 2, 3,4])
 
 c.render()

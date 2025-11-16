@@ -8,9 +8,9 @@ ylabelTextSize = 8
 xtitleTextSize = 8
 ytitleTextSize = 8
 
-legendTextSize = 8
+legendTextSize = 7
 legendSize = 8
-legendSkip = 76.5
+legendSkip = 58
 
 # 定义绘画区域大小、线条粗细、轴样式
 dimension = [110, 50]
@@ -71,10 +71,10 @@ p = plotter() # 画笔
 L = legend() # 图例
 
 
-series_list = ['base_', 'itf', 'ro', 'all_']
+series_list = ['base_', 'itf','p','ro', 'all_']
 fillcolors    = ['lightblue', 'darkseagreen', 'wheat', 'lightsalmon', 'darkseagreen',  'lightgrey']
-fillcolors    = ['wheat', 'darkseagreen','lightblue',   'lightcoral',  ]
-legend_names = ['AS+H2O+LFU', '+ITF', '+RO', 'All']
+fillcolors    = ['wheat', 'darkseagreen','lightblue',  'lightsalmon', 'lightcoral',  ]
+legend_names = ['AS+H2O+LFU', '+ITF','+P', '+RO', 'All']
 
 
 for i in range(len(series_list)):
@@ -99,7 +99,7 @@ for i in range(len(series_list)):
 
 #### legend
 L.draw(canvas=c, coord=[d.left(), d.top()+8], skipnext=1, 
-     skipspace=legendSkip,hspace=4, fontsize=legendTextSize,  
+     skipspace=legendSkip,hspace=2, fontsize=legendTextSize,  
      width=legendSize, height=legendSize, order=[0, 1, 2, 3,4])
 
 c.render()

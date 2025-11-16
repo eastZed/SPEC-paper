@@ -1,6 +1,6 @@
-# Series rc as_ ash2o ash2olfu ours
-OPT-13B  0 7.27 5.01 2.94 1.92
-OPT-30B	 0 4.09 2.31 1.75 1.37
+# Series rc as_ ash2o ash2olfu ours hyperinfer
+OPT-13B  0 7.27 5.01 2.94 1.92 1 
+OPT-30B	 0 4.09 2.31 1.75 1.37 1
 
 
 

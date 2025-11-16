@@ -1,4 +1,4 @@
-PY=python
+PY=/usr/bin/python3
 EPS2PDF=ps2pdf
 CROP=pdfcrop
 

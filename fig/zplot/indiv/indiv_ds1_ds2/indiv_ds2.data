@@ -1,6 +1,6 @@
-# Series base_ itf ro all_
-OPT-13B  1 0.75 0.73 0.58
-OPT-30B	 1 0.92 0.89 0.76
+# Series base_ itf p ro all_
+OPT-13B  1 0.75 0.74 0.73 0.58
+OPT-30B	 1 0.92 0.9 0.89 0.76
 
 
 

@@ -1,7 +1,7 @@
-# Series rc as_ ash2o ash2olfu ours
-OPT-6.7B 2.13 1.71 1.98 1.67 0.78
-OPT-13B  4.9 5.12 3.7 3.0 1.23
-OPT-30B	 2.4 3.5 2.5 2.05 1.03
+# Series rc as_ ash2o ash2olfu ours hyperinfer oracle
+OPT-6.7B 2.13 1.71 1.98 1.67 0.78 0.3 0.2 
+OPT-13B  4.9 5.12 3.7 3.0 1.23 0.3 0.2 
+OPT-30B	 2.4 3.5 2.5 2.05 1.03 0.3 0.2 
 
 
 

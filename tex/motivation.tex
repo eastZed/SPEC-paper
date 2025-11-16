@@ -1,4 +1,4 @@
-\cp{\section{Design Challenges of \pname{}}}
+\section{Design Challenges of \pname{}}
 \label{motiv}
 
 \begin{figure}
@@ -18,7 +18,7 @@
 
 
 \noindent \textbf{Challenge 1: Importance identification introduces high I/O overhead for prefix KV loading.}
-\cp{Existing methods identify important KVs by loading all prefix keys (K) into GPU memory~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23}, 
+\fvc{Existing methods identify important KVs by loading all prefix keys (K) into GPU memory~\cite{h2o-nips23, infinigen-osdi24, flexgen-icml23, scissorhands-nips23}, 
 so reducing only the loading time of values (V) yields limited TTFT gains. 
 A naive solution to reduce I/O overhead is to pre-record the important tokens of each prefix based on prior queries and load only their KVs when the same prefix reappears. 
 However, this static approach fails to account for query-dependent token importance. 
@@ -144,4 +144,4 @@ frequency. The hotness or coldness of a chunk is not related to the
 ratio of important KVs it contains. These observations 
 % confirm the challenges mentioned above and 
 underscore the need for new KV storage and cache management methods to reduce 
-the loading of unimportant KVs from disk and improve cache hit ratios.
+the loading of unimportant KVs from disk and improve cache hit ratios. 
