@@ -36,7 +36,7 @@ storage. Besides, we disable its scheduler-aware optimizations to make it more
 suitable for general scenarios, such as preemptive scheduling environments.
 (3) \textit{AS+H2O+LRU}: We combine AS-like with one of the state-of-the-art important KV selection systems, H2O~\cite{h2o-nips23}. Different from the AS-like, it loads only important values rather than the full values of shared prefixes.
 (4) \textit{AS+H2O+LFU}: It is similar to (3), but it uses LFU to manage the cache.
-\zrdnew{(5) \textit{IMP}~\cite{impress-fast25}: IMPRESS selectively loads partial keys and values, but exposees loading on the critical path.}
+\zrdnew{(5) \textit{IMP}~\cite{impress-fast25}: IMPRESS selectively loads partial keys and values, but exposes loading on the critical path.}
 %We believe both (3) and (4) represent state-of-the-art systems for accelerating prefix KV loading from storage, combining existing optimization techniques.
 \zrdnew{In contrast, \textit{\pname{}} selectively loads keys and values,  prefetches them for next layer speculatively, 
 %enables KV reordering, and employs a score-based cache management strategy.

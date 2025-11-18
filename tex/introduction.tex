@@ -92,9 +92,9 @@ Based on this insight, we propose a \techa{} method that only loads the keys fro
 %\he{a subset of keys} 
 to identify crucial KVs within the entire prefix. 
 
-\zrdnew{To adress the second challenge, we leverage the observation that important token distributions also exhibit inter-layer similarity across adjacent transformer layers. Building on this property, we design a \technew{} mechanism that uses the important tokens identified at layer i as a prior to predict those of layer i+1. This enables the system to prefetch the next layer’s KVs during the current layer’s computation, overlapping I/O with computation and further reducing first-token latency.}
+\zrdnew{To address the second challenge, we leverage the observation that important token distributions also exhibit inter-layer similarity across adjacent transformer layers. Building on this property, we design a \technew{} mechanism that uses the important tokens identified at layer i as a prior to predict those of layer i+1. This enables the system to prefetch the next layer’s KVs during the current layer’s computation, overlapping I/O with computation and further reducing first-token latency.}
 
-To adress the third challenge, we propose \techb{} methods. 
+To address the third challenge, we propose \techb{} methods. 
 We employ a \techba{} technique to reorder and repack the prefix KVs stored on
 disk, thereby increasing the density of important KVs in the chunks and
 improving the effective disk read bandwidth. Additionally, we introduce a new
@@ -106,7 +106,7 @@ We implement \pname{} and evaluate its performance on three LLM models with vari
 The main contributions of this paper are as follows:
 \begin{itemize}
 \item \zrdnew{We present \pname{}, the first importance-informed prefix KV prefetching and caching
-system that integrates three storage tiers: GPU memory, CPU memory, and disk.}%
+system that integrates three storage tiers: GPU memory, CPU memory and disk.}%
 \item \zrdnew{We propose \technew{} mechanism to prefetch important KVs, effectively overlapping I/O with computation.}
 \item We propose a similarity-guided important token identification method to
 identify important KVs, significantly reducing I/O overhead.
