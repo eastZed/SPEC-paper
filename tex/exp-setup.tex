@@ -42,12 +42,12 @@ suitable for general scenarios, such as preemptive scheduling environments.
 %enables KV reordering, and employs a score-based cache management strategy.
 reorders KVs, and uses a score-based cache management strategy.
 Besides, we include an \textit{Oracle} comparison, where the prefetching is perfectly accurate and completely overlaps with computation.}
-
 % \he{By default, we allocate 10GB of GPU cache and 32GB of CPU cache to avoid runtime out-of-memory errors for all the systems.}
 % The average prefix KV storage requirements for PIQA, RTE, COPA, and OpenBookQA across three models are 55 GB, 57 GB, 64 GB, and 65 GB, respectively.
 % Each chunk contains 64 tokens' keys or values in all systems~\cite{chunkattention-arxiv24}.
 % We clarify that in our scenario, the entire query is always retained, unlike
 % existing KV pruning systems~\cite{h2o-nips23, infinigen-osdi24}.
+
 To prevent runtime out-of-memory errors and ensure only a portion of the prefix
 KVs are cached (the other KVs reside on SSD), we allocate 10GB of GPU cache and 32GB of CPU cache for prefix
 KVs, leaving the remaining GPU and CPU memory for storing model weights, the KV cache

@@ -237,12 +237,12 @@ is higher than the similarity threshold.
 
 
 
-\zrd{Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disk. The number of probe heads is set to three. 
+Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disk. The number of probe heads is set to three. 
 Without it, all 32 heads must load 128 \textit{key} vectors and later 32 \(k,v\) vectors, totaling 160 vectors. 
 With \techa{}, only 12 \textit{key} vectors from three probe heads are first loaded. The GPU computes attention and measures probe-head similarity. 
 If the similarity exceeds the threshold, only one token index deemed most important by all probe heads \(\{x\}\) is used, and 64 \(k,v\) vectors are loaded and just 76 vectors in total. 
 When the threshold is unmet, the process reverts to the standard mode, though this occurs in fewer than 20\% of layers. 
-Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectively reduces I/O load across most layers. }
+Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectively reduces I/O load across most layers. 
 %Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disk. The number of probe heads is set to three. 
 %Without the \techa{} technique, it involves three steps: 
 %(1) loading the keys of all 32 heads (total 32 $\times$ 4 = 128 vectors) from
@@ -284,11 +284,11 @@ Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectiv
 \end{figure}
 
 
-\cp{Figure~\ref{fig:simiload-ttft} compares the timelines for completing three transformer layers with and without \techa{}. 
+Figure~\ref{fig:simiload-ttft} compares the timelines for completing three transformer layers with and without \techa{}. 
 Without \techa{} (Figure~\ref{fig:simiload-ttft}(a)), loading all keys causes significant GPU idle time, leading to a prolonged inference process. 
 With \techa{} enabled (Figure~\ref{fig:simiload-ttft}(b)), when the similarity among probe heads exceeds the threshold, only the keys from the selected probe heads (in red) are first loaded to identify important tokens. 
 After obtaining the important token positions, the system selectively loads only the corresponding keys and values instead of all tokens, effectively reducing I/O overhead. 
-This selective loading also shortens the time required for generating important token index sets (in green), resulting in a shorter overall TTFT.}
+This selective loading also shortens the time required for generating important token index sets (in green), resulting in a shorter overall TTFT.
 
 %However, as indicated by the black dashed arrows, dependencies among key loading, token selection, and value loading still limit the degree of overlap between computation and I/O, resulting in partial idle periods on the GPU stream.
 
@@ -307,9 +307,9 @@ This selective loading also shortens the time required for generating important 
 %\fv{
 %We first compute the similarity of important token sets between each pair of  probe heads, and then take the average to measure the overall similarity among the three probe heads. Thus, the similarity is independent of the order of probe heads.
 %}
-\zrd{To make the algorithm practical, we determine both the number of probe heads and the similarity threshold. Using a single probe head may introduce bias, while two heads can produce inconsistent results. Empirically, adopting three probe heads achieves a good balance between accuracy and efficiency. Adding more heads provides negligible accuracy improvement but increases key-loading latency and TTFT. Since attention heads exhibit high similarity, we simply select the first three heads in each transformer layer for efficiency. 
+To make the algorithm practical, we determine both the number of probe heads and the similarity threshold. Using a single probe head may introduce bias, while two heads can produce inconsistent results. Empirically, adopting three probe heads achieves a good balance between accuracy and efficiency. Adding more heads provides negligible accuracy improvement but increases key-loading latency and TTFT. Since attention heads exhibit high similarity, we simply select the first three heads in each transformer layer for efficiency. 
 The similarity threshold also plays a critical role. A high threshold may fail to reduce KV loading because the measured similarity among probe heads often falls below it, whereas a low threshold may bias the selection of important tokens and degrade accuracy. As shown in Figure~\ref{fig:thred} on the PIQA~\cite{lmeval} dataset, each transformer layer selects the top 25\% most critical prefix KVs. Reducing the threshold from 1 to 0 decreases the number of loaded keys by 4$\times$, but also reduces accuracy from 79.1\% to 77.5\%. Similar trends are observed across other datasets.
-}
+
 
 
 \begin{figure}
