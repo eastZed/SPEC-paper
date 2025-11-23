@@ -103,7 +103,7 @@ for ax in axes:
 # 创建一个统一的图例，横跨三个子图
 # fig.legend(axes[0].get_lines(), ['ReComp', 'AS', 'AS+H2O'], loc='upper center', 
         #    bbox_to_anchor=(0.5, 1.08), ncol=3, frameon=False)
-fig.legend(axes[0].get_lines(), ['ReComp / AS', 'AS+H2O+LRU', 'IMPRESS'], loc='upper center', 
+fig.legend(axes[0].get_lines(), ['ReComp / AS', 'AS+H2O+LRU', 'HyperInfer'], loc='upper center', 
            bbox_to_anchor=(0.5, 1.06), ncol=3, frameon=False, fontsize=20, 
            markerscale=1.5, handlelength=3)
 # plt.tight_layout(rect=[0, 0, 0, 3])

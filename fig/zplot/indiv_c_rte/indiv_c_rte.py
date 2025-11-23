@@ -55,7 +55,7 @@ L = legend() # 图例
 
 series_list = ['AHL', 'ours']
 fillcolors    = ['lightblue', 'lightcoral', 'lightsalmon', 'darkseagreen',  'lightgrey']
-legend_names = ['AS+H2O+LFU', 'IMPRESS']
+legend_names = ['AS+H2O+LFU', 'Hyperinfer']
 
 
 for i in (range(len(series_list))):
