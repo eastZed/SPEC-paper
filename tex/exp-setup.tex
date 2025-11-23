@@ -56,11 +56,3 @@ used during the decoding phase, and the input data.
 On average, PIQA, RTE, COPA, and OpenBookQA require 55GB, 57GB, 64GB, and 65GB of storage for prefix KVs across three models, respectively. Uniformly, each chunk holds keys or values from 64 tokens~\cite{chunkattention-arxiv24}. 
 %Note that, unlike conventional KV pruning systems~\cite{h2o-nips23, infinigen-osdi24}, we retain the full query in our scenario.
 
-\begin{figure*}
-	\includegraphics[width=7in, height=1in]{ttft_ds1_ds2_ds3_ds4.pdf}
-	\vspace{-0.1in}
-	\caption{
-		\zrdnew{The average TTFT with various systems across four dataset and three models.}}
-	\label{fig:overall_ttft}
-	\vspace{-0.1in}
-\end{figure*}

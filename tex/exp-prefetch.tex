@@ -1,10 +1,21 @@
 \subsection{\zrdnew{Prefetching Performance Analysis}}
 \label{exp:prefetch}
-\zrdnew{\textbf{Coverage of \technew{}.}
+\begin{figure}
+	\centering
+	\includegraphics[width=3.3in, height=1in]{acc_cov.pdf}
+	\vspace{-0.1in}
+	\caption{\zrdnew{The performance impact of each optimization.}}
+	\label{fig:cov_acc}
+	\vspace{-0.1in}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=3.3in, height=1in]{his_ours_io.pdf}
+	\vspace{-0.1in}
+	\caption{\zrdnew{The performance impact of each optimization.}}
+	\label{fig:his_ours_io}
+	\vspace{-0.1in}
+\end{figure}
+\zrdnew{HyperInfer utilizes the \technew method as described in \cref{sec:technew} (denoted as \textit{LAYER-WISE}) to effiectively prefetch important KVs fot next layer. We compare it with the history-based method (denoted as \textit{HISTORY}). The \textit{HISTORY}  method prefetches KV pairs for the next layer based on their historical importance, iand prioritize KV pairs that have been useful most often in the past. Figure~\ref{fig:cov_acc} 
 }
-
-\zrdnew{\textbf{Accuracy of \technew{}.}
-}
-
-\zrdnew{\textbf{Comparison with historical importance based pretetching.}
-}
+Figure~\ref{fig:his_ours_io}

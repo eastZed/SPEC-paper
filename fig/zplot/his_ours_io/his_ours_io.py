@@ -10,7 +10,7 @@ ytitleTextSize = 8
 
 legendTextSize = 7
 legendSize = 8
-legendSkip = 58
+legendSkip = 195
 
 # 定义绘画区域大小、线条粗细、轴样式
 dimension = [110, 50]
@@ -19,7 +19,7 @@ axisstyle = 'box'
 axisticstyle = 'in'
 
 # 定义生成文件名、来源数据文件名
-filename = 'indiv_ds1_ds2'
+filename = 'his_ours_io'
 dataname1 = 'indiv_ds1.data'
 dataname2 = 'indiv_ds2.data'
 
@@ -42,7 +42,7 @@ axis(drawable=d, style=axisstyle, ticstyle=axisticstyle,
          doxmajortics=False, doymajortics=True,
          xminorticcnt=0, doxminortics=False, yminorticcnt=0,
          xtitle='(a) RTE', xtitleshift=[0,5],
-         ytitle='Norm. TTFT', doylabels=True, ytitleshift=[0,0],
+         ytitle='Accuracy', doylabels=True, ytitleshift=[0,0],
          # linewidth=0.8,
          linewidth=lineWidth,
          xaxisposition=0, yauto=['','', 0.4], xlabelrotate=0,
@@ -56,7 +56,7 @@ axis(drawable=d2, style=axisstyle, ticstyle=axisticstyle,
          doxmajortics=False, doymajortics=True,
          xminorticcnt=0, doxminortics=False, yminorticcnt=0,
          xtitle='(b) COPA', xtitleshift=[0, 5],
-         ytitle='Norm. TTFT', doylabels=True, ytitleshift=[0,0],
+         ytitle='Coverage', doylabels=True, ytitleshift=[0,0],
          # linewidth=0.8,
          linewidth=lineWidth,
          xaxisposition=0, yauto=['','', 0.4], xlabelrotate=0,
@@ -71,10 +71,10 @@ p = plotter() # 画笔
 L = legend() # 图例
 
 
-series_list = ['base_', 'itf','p','ro', 'all_']
+series_list = ['his', 'hyperinfer']
 fillcolors    = ['lightblue', 'darkseagreen', 'wheat', 'lightsalmon', 'darkseagreen',  'lightgrey']
 fillcolors    = ['wheat', 'darkseagreen','lightblue',  'lightsalmon', 'lightcoral',  ]
-legend_names = ['AS+H2O+LFU', '+ITF','+P', '+RO', 'All']
+legend_names = ['HISTORY', 'LAYER-WISE']
 
 
 for i in range(len(series_list)):
