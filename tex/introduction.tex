@@ -107,11 +107,9 @@ The main contributions of this paper are as follows:
 \begin{itemize}
 \item \zrdnew{We present \pname{}, the first importance-informed prefix KV prefetching and caching
 system that integrates three storage tiers: GPU memory, CPU memory and disk.}%
-\item \zrdnew{We propose \technew{} mechanism to prefetch important KVs, effectively overlapping I/O with computation.}
-\item We propose a similarity-guided important token identification method to
-identify important KVs, significantly reducing I/O overhead.
+\item \cp{We propose \technew{} mechanism to prefetch important KVs, effectively overlapping I/O with computation.}
+\item We introduce a similarity-guided important token identification method for efficiently locating important KVs, and complement it with \techb{}, which incorporates \techba{} and a new \techbb{} policy to further minimize I/O data movement from slower storage media.
 
-\item We devise \techb{} methods including \techba{} and a new \techbb{} policy to further minimize I/O data volume from slower storage media.
 
 \item We implement \pname{} and our evaluation demonstrates that it reduces TTFT by up to \zrd{?}$\times$ compared to the state-of-the-art prefix KV storage systems while maintaining comparable inference accuracy.
 \end{itemize}
