@@ -44,7 +44,7 @@ As shown in Figure~\ref{fig:simiload-ttft}(b), KV loading can only start after t
 To mitigate this overhead, we employ prefetching to overlap data loading with computation. 
 However, a key challenge remains: the important tokens for the next transformer layer cannot be identified until the current layer’s computation completes, making it difficult to determine which KVs to prefetch in advance.}
 
-\cp{To solve this challenge, based on \textit{Observation~III}, we propose the \technew{} mechanism, which exploits the strong similarity of important token index sets across adjacent layers. 
+\cp{To solve this challenge, we propose the \technew{} mechanism, which exploits the strong similarity of important token index sets across adjacent layers. 
 During the computation of the current layer, \technew{} asynchronously prefetches the next layer’s important KVs into GPU memory by leveraging the importance distribution from the current layer. 
 For example, 
 as illustrated in Figure~\ref{fig:simiload-ttft}(b), KV loading in Layer~1 cannot begin until token selection completes, causing GPU stalls. 
@@ -54,31 +54,28 @@ Specifically, the important token positions identified in Layer~0 are used as an
 
 
 \cp{
-While \technew{} effectively hides part of the I/O latency, efficient prefetching still faces two key challenges. 
-First, approximating the next layer’s important tokens using those of the current layer can leave a portion of the selections inaccurate, so improving prefetch accuracy and providing a recovery mechanism to fetch missing data are both essential.
-Second, the prefetching I/O must be carefully coordinated with computation. 
-If computation takes longer than prefetching, the I/O bandwidth remains underutilized; conversely, if prefetching exceeds computation time, speculative I/O lies on the critical path, and any mispredicted prefetches can introduce additional latency.}
+While \technew{} hides part of the I/O latency, efficient prefetching still faces two issues. 
+First, using the current layer’s important tokens to approximate those of the next layer inevitably introduces inaccuracies, making both higher prefetch accuracy and a recovery mechanism necessary. 
+Second, prefetching I/O must be tightly coordinated with computation: if computation outlasts prefetching, I/O bandwidth is wasted; if prefetching exceeds computation time, speculative I/O falls on the critical path and any mispredicted prefetches add latency.}
 
 
 \cp{
-To tackle the first issue, based on \textit{Observation~III}, we rank all candidate tokens by their importance scores in the current layer and prefetch their corresponding KVs in descending order, as tokens with higher importance are more likely to remain important at the same indices in the next layer. 
-Before the next layer begins computation, a probe \textit{head-K} loading operation validates the prefetched results and synchronously loads any missing KVs on the critical path, as shown by the red-bordered KV loading in Figure~\ref{fig:simiload-ttft}(c).}
-
-
-\cp{
-To address the second issue, it is essential to ensure that computation and prefetching I/O are well aligned in time. 
-Achieving this requires accurate estimation of both computation and I/O durations. 
-For computation, we observe that during the prefill stage of inference, the workload across transformer layers remains roughly constant, as their structural design is identical.
-Therefore, we use the measured computation time of the first layer as an estimate for all subsequent layers, which serves as the time budget for prefetching. }
+ To tackle the first issue, we rank all candidate tokens by their importance scores in the current layer and prefetch their corresponding KVs in descending order, as tokens with higher importance are more likely to remain important at the same indices in the next layer. 
+Before the next layer begins computation, a probe \textit{head-K} loading operation validates the prefetched results and synchronously loads any missing KVs on the critical path, as shown by the red-bordered KV loading in Figure~\ref{fig:simiload-ttft}(c). 
+Because the number of missing KVs is always no greater than the total set of KVs that would otherwise need to be loaded on demand, this fallback step incurs strictly lower latency than performing all KV loads directly on the critical path.
+}
 
 \cp{
-For I/O estimation, K and V vectors are stored in fixed-size chunks, each containing multiple token entries (e.g., \texttt{chunksize}=64). 
-Given a set of target token IDs, we map each token to its chunk and determine the storage tier. 
-Chunks on SSD are first mmap-loaded into CPU memory before the required K/Vs are transferred to GPU via PCIe, while chunks in CPU memory are directly transferred and GPU-resident chunks are accessed immediately. 
-Profiling shows that chunk-fetch latency within each tier is stable and predictable. 
-Therefore, we profile the average per-chunk latency across different storage tiers (SSD, CPU, GPU) by measuring multiple fetch operations on each medium and taking their mean values as reference. 
-Using these profiled averages, we load chunks in descending order of token importance until the prefetching window is filled. 
-This ensures that prefetching time closely matches computation, effectively hiding I/O latency behind GPU execution.}
+To address the second issue, computation and prefetching I/O must be aligned in time, which requires accurate estimates of their durations. 
+During the prefill stage, all transformer layers incur similar computational cost due to their identical structure. 
+Thus, we use the measured computation time of the first layer as a proxy for the rest, treating it as the available prefetching window.
+For I/O estimation, K/V vectors are stored in fixed-size chunks (e.g., \texttt{chunksize}=64). 
+Given a set of target token IDs, we map each token to its corresponding chunk and identify the storage tier. 
+SSD-resident chunks are \texttt{mmap}-loaded into CPU memory before the required K/Vs are transferred to GPU via PCIe, whereas CPU-resident chunks are directly transferred and GPU-resident chunks are accessed immediately. 
+Profiling shows that chunk-fetch latency is stable within each tier. 
+Thus, we measure the average per-chunk latency on SSD, CPU, and GPU and use these values as the I/O cost model. 
+During prefetching, chunks are loaded in descending order of token importance until the prefetching time window  is filled, ensuring that prefetching aligns closely with computation and effectively hides I/O latency.
+}
 
 
 

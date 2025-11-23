@@ -12,8 +12,9 @@
 
 %原文%We present the \techba{} method to address the unnecessary loading of unimportant KVs during important KV retrieval. By periodically reorganizing and repacking important KVs into denser chunks, this approach optimizes read efficiency and reduces bandwidth waste.
 %Scheduled at regular intervals (e.g., every 10 minutes), this process is based on the average token importance and operates asynchronously to avoid disrupting the main I/O flow.
-\cp{We present the \techba{} method to address the unnecessary loading of unimportant KVs during important KV retrieval. By periodically reorganizing and repacking important KVs into denser chunks, this approach optimizes read efficiency and reduces bandwidth waste.
-	Scheduled at regular intervals (e.g., every 10 minutes), this process is based on the average token importance and operates asynchronously to avoid disrupting the main I/O flow.}
+\cp{We present the \techba{} method to address the unnecessary loading of unimportant KVs during important KV retrieval. By periodically reorganizing and repacking important KVs into chunks, this approach optimizes read efficiency and reduces bandwidth waste.
+Scheduled at regular intervals (e.g., every 10 minutes), this process is based on the average token importance and operates asynchronously to avoid disrupting the main I/O flow.
+}
 
 \begin{figure}
 	\centering
@@ -34,14 +35,15 @@
 	When loading,
 	without reordering (Figure~\ref{fig:reordering}\,(a)), all chunks must be loaded to retrieve the important keys $\{t_0, t_3, t_4\}$, wasting read bandwidth and cache space on unimportance keys. }
 	
-	\cp{
-	With \techba{} as in IMPRESS (Figure~\ref{fig:reordering}(b)), tokens are reordered by importance but packed into chunks according to token IDs (e.g., $[t_0, t_3]$, $[t_1, t_2]$, $[t_4, t_5]$). 
-	This organization reduces redundant reads but limits prefetch efficiency when I/O time is constrained. 
-	For example, if the prefetching time window allows prefetching only one SSD chunk, the ideal prefetching order based on importance would retrieve $t_0$ and  $t_4$, as the prefetch policy in \S\ref{sec:techc}. 
-	However, under the data layout of IMPRESS, $t_0$ and $t_4$ are stored in different chunks, while $t_0$ and $t_3$ share one. 
-	As a result, since $t_0$ and $t_3$ share the same chunk, fetching the most important key $t_0$ also forces $t_3$ to be loaded together, which prevents $t_4$ from being prefetched within the time limit.
-	In contrast, \pname{} (Figure~\ref{fig:reordering}(c)) organizes chunks by importance ranking (e.g., $[t_0, t_4]$, $[t_2, t_3]$, $[t_1, t_5]$), allowing the prefetch of $\{t_0, t_4\}$ under the same budget and thereby maximizing prefetch efficiency.
-}
+\cp{
+With \techba{} as in IMPRESS (Figure~\ref{fig:reordering}(b)), tokens are reordered by importance but still packed into chunks according to token IDs (e.g., $[t_0,t_3]$, $[t_1,t_2]$, $[t_4,t_5]$). 
+This reduces redundant reads but limits prefetch efficiency when I/O time is tight. 
+For instance, if the prefetching window allows loading only one SSD chunk, the ideal importance-based order would fetch $t_0$ and $t_4$ ($t_0 > t_4 > t_3$). 
+However, under IMPRESS’s layout, $t_0$ and $t_4$ reside in different chunks, while $t_0$ and $t_3$ share one. 
+Thus, fetching the most important key $t_0$ also forces $t_3$ to be loaded, preventing $t_4$ from being prefetched within the time limit. 
+In contrast, \pname{} (Figure~\ref{fig:reordering}(c)) groups tokens strictly by importance value (e.g., $[t_0,t_4]$, $[t_2,t_3]$, $[t_1,t_5]$), enabling $\{t_0,t_4\}$ to be prefetched under the same budget and maximizing prefetch efficiency.}
+
+
 
 
 %\noindent \textbf{Metadata adjustment.}
