@@ -19,7 +19,7 @@ reusing them does not always reduce TTFT, as disk I/O latency is high.
 %model inference. 
 \zrdnew{In this paper, we present \pname{}, an importance-informed multi-tier prefix KV caching and prefetching system designed to reduce TTFT in LLM inference. \pname{} first employs an I/O-efficient algorithm to identify and load only the most important KVs, thereby minimizing I/O overhead. Leveraging the observed similarity of important token index sets across adjacent transformer layers, it further introduces a speculative prefetching mechanism to hide I/O latency along the critical inference path. Finally, \pname{} optimizes prefix KV storage and cache utilization through importance-informed KV management, achieving additional reductions in TTFT for end-to-end inference.}
 Our experimental results show that \pname{} can reduce TTFT by
-up to \zrd{?}$\times$ compared to state-of-the-art systems, while maintaining
+up to \zrd{1.75}$\times$ compared to state-of-the-art systems, while maintaining
 comparable inference accuracy.
 	
 \end{abstract}
