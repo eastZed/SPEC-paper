@@ -14,7 +14,7 @@ ytitleTextSize = 8
 
 legendTextSize = 8
 legendSize = 8
-legendSkip = 90
+legendSkip = 101
 
 # 定义绘画区域大小、线条粗细、轴样式
 dimension = [110, 50]
@@ -191,7 +191,7 @@ for row_idx in range(len(data2)):
 # L.draw(canvas=c, coord=[d.left()-7, d.top()+7], skipnext=1, 
 #      skipspace=legendSkip,hspace=2, fontsize=legendTextSize,  
 #      width=legendSize, height=legendSize, order=[0, 1, 2, 3,4, 5])
-L.draw(canvas=c, coord=[d.left()-7, d.top()+20], skipnext=2, 
+L.draw(canvas=c, coord=[d.left(), d.top()+20], skipnext=2, 
      skipspace=legendSkip, hspace=2, fontsize=legendTextSize,  
      width=legendSize, height=legendSize, order=[0, 1, 2, 3, 4, 5])
 
