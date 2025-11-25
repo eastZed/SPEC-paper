@@ -3,7 +3,7 @@
 \begin{figure}
 	\centering
 	\includegraphics[width=3.3in, height=1in]{acc_cov.pdf}
-	\vspace{-0.1in}
+%	\vspace{-0.1in}
 	\caption{\zrdnew{The prefetch accuracy of each method.}}
 	\label{fig:cov_acc}
 	\vspace{-0.1in}
@@ -11,7 +11,7 @@
 \begin{figure}
 	\centering
 	\includegraphics[width=3.3in, height=1in]{his_ours_io.pdf}
-	\vspace{-0.1in}
+%	\vspace{-0.1in}
 	\caption{\zrdnew{The prefix KVs loading time on the inference critical path of each method.}}
 	\label{fig:his_ours_io}
 	\vspace{-0.1in}
@@ -21,10 +21,9 @@ HyperInfer employs the \technew{} mechanism described in \cref{sec:technew}
 (denoted as \textit{LAYER-WISE}) to prefetch important KVs for the next layer. 
 We compare it against a naive history-based baseline (denoted as \textit{HISTORY}), 
 which prefetches KVs solely based on their global historical usefulness, 
-independent of the current request.
+independent of the current request, as described in \S\ref{motiv}.
 We evaluate the two methods along two dimensions:  
-(1) \textbf{Prefetch accuracy}, defined as the fraction of prefetched KVs that 
-actually belong to the important KV set of the next layer; and  
+(1) \textbf{Prefetch accuracy}, defined as the fraction of prefetched KVs that actually appear in the next layer’s important-KV set; and  
 (2) \textbf{Critical-path I/O time}, which measures the amount of KV loading that 
 remains exposed on the inference critical path.
 These metrics collectively show how precisely each method selects the KVs 
