@@ -49,7 +49,7 @@ Let's assume that the entire prefix $R=[t^p_0,...,t^p_{m}]$ is found in the data
 Next, \pname{} identifies the important tokens within $R$, assuming $R_{important}=[t^p_{t}, t^p_{t+1}, ..., t^p_s]$ 
 ($ 0 \leq t \leq s \leq m$) is identified (\cref{sec:techa}).
 If the KVs in $R_{important}$ are not in GPU memory, they are loaded from lower memory tiers (CPU or disk) (\cref{sec:techb}).
-During this process, the system also predicts the next set of important KVs and proactively prefetches them to overlap I/O with computation, thereby further mitigating data access latency (\cref{sec:techc}). 
+During this process, the system also predicts the next set of important KVs and proactively prefetches them to overlap I/O with computation, thereby further mitigating data access latency (\cref{sec:technew    }). 
 Both the important KVs and any incorrectly prefetched KVs are passed to the LLM for computation, whereas other KVs of unimportant tokens in $R$ are discarded and do not participate in subsequent inference. 
 Then, the loaded $R_{\text{important}}$ and the query tokens enter the LLM model, completing the remaining computations in the prefill phase. 
 The decoding phase remains unchanged, following existing systems~\cite{alluneed-nips17}.}
