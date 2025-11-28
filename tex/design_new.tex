@@ -8,29 +8,36 @@
 \zrdnew{
 	\textbf{Observation III: }
 %	{Important token indices exhibit strong consistency across adjacent layers of an LLM.} To further analyze the distribution of important token indices, we examine the similarity of the top 25\% important token sets across adjacent layers for different models. As shown in Figure~\ref{fig:ob3}(a), there are two key observations: (1) the important tokens exhibit strong consistency across layers, and (2) tokens with higher importance in one layer are more likely to remain important in the subsequent layer.
-We summarize two key observations regarding the stability of token importance across layers: 
-(1) tokens with higher importance scores in the current layer are  more likely to remain important in the subsequent layer; 
-and (2) the probability of a token remaining important in the next layer is positively correlated with its importance score in the current layer. Tokens with higher importance values are more likely to stay important, while those with lower importance values have a decreasing probability of remaining important in the next layer.
-To illustrate these observations, 
-Figure~\ref{fig:ob3}(a) shows the probability that a token remains important in the next layer. We take the top 25\% tokens with the highest importance values as important tokens. The x-axis represents the top $n$\% of these important tokens ranked by importance, and the y-axis shows the proportion that remain important in the next layer, averaged over 32 layers. Specifically, xxx.
+The sets of important token indices are highly similar between adjacent Transformer layers.}
+
+\zrdnew{To quantify this, we compute the similarity between important token index sets across adjacent Transformer layers for several OPT models. In each layer, we select the top 25\% of tokens ranked by their attention-based importance scores, and measure the similarity between this index set and that of the next layer using the Jaccard index~\cite{jaccard-18}. As shown in Figure~\ref{fig:sim_layer}, each bar represents the similarity between two neighboring layers. We find that similarity values are consistently bounded within a relatively tight interval, with the sampled OPT-6.7B model exhibiting similarities across layers that largely fall between 0.40 and 0.85, and an average similarity of 0.48. This indicates that the attention heads in neighboring layers tend to focus on comparable token positions. }
+
+\zrdnew{Furthermore, we find that tokens that are more important in one layer tend to remain important in the next layer. As shown in Figure~\ref{fig:layer_wise_r}, we first rank all tokens in each layer by their importance and take the top 25\% as important tokens. Within this important set, we further partition token positions into finer bins according to their importance percentiles. For each bin, we then measure the recall ratio of important tokens in the next layer, defined as the fraction of tokens in that bin which are still classified as important in the subsequent layer. The resulting curves show that bins containing tokens with higher importance in the current layer consistently achieve larger recall ratios, and all models and datasets exhibit the same overall trend.
 }
 
 
-
+%相邻层的重要token index sets 是相似的。这里需要写一段直觉上有道理的话来支持。我们分析了多个模型的重要token indecs sets相邻层的相似度，when selecting top 25%，每个bar表示本层和下一层重要token index set的相似度。 另外我们还发现，重要性排名越高的token，在下一层中保持重要的概率越大。我们在piqa和openbookqa数据集上，将重要性排名前25%的token当作重要token，
 %
 \begin{figure}
 	\centering
-	\subfigure[select the top 25\% most important tokens]{
-		\includegraphics[width=1.5in, height=1in]{sim-25-cross-layers.pdf}
-	}
-	\subfigure[select different percentage most important tokens]{
-		\includegraphics[width=1.5in, height=1in]{recall-sele.pdf}
-	}
+	\includegraphics[width=3.2in, height=0.6in]{sim-25.pdf}
 	\vspace{-0.1in}
-	\caption{Similarities of important token index sets of adjacent layers.}
-	\label{fig:ob3}
+	\caption{
+		Similarity of important token index sets between adjacent transformer layers in OPT models.}
+	\label{fig:sim_layer}
 	\vspace{-0.1in}
 \end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=3.3in, height=1.3in]{importance_transition_two_datasets.pdf}
+	\vspace{-0.1in}
+	\caption{Recall ratio of next layer important tokens vs.\ current layer importance percentile.
+		}
+	\label{fig:layer_wise_r}
+	\vspace{-0.1in}
+\end{figure}
+
 %如图xx所示，在模型的一层内，识别重要token index set和加载重要token的kv是有数据依赖的，在没有识别得到重要token index set的情况下，我们无法准确预取下一层所需的重要kv，因此在此层计算时，宝贵的I/O带宽没有被利用，在一个本就I/O瓶颈的场景下。一个naive的方法是，随机的预取一些下一层可能用到的token的kvs到GPU memory中，在下一层的重要token选择完成后，再把不在gpu mem的重要kv load到gpu mem中，然而这样的方法受制于完全不知道下一层重要token index的分布，准确率差，浪费了I/O带宽。一些工作提出了attention sink的概念，即一些特定位置的token在推理过程中总是重要的，如prompt的开头和结尾的几个token，然而，仅预取sink位置的token准确率仍不一定高（一些引用），且存在带宽利用不充分的可能。因此我们提出一种准确率高，灵活的指导预取的方法，高效的预取下一层的重要kv，并将预取与计算overlap起来。我们study了\cref{sec:techa}中提到的识别重要token的方法所识别出的重要token，发现在模型的相邻层重要token的分布是相似的，且重要性排名分位越靠前的index集合，相似度越高。相似度仍用jaccard index量化。
 %图片xx描述了基于相似性的重要token识别方法识别出的，图片xx
 

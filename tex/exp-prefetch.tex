@@ -24,7 +24,7 @@ which prefetches KVs solely based on their global historical usefulness,
 independent of the current request, as described in \S\ref{motiv}.
 We evaluate the two methods along two dimensions:  
 (1) \textbf{Prefetch accuracy}, defined as the fraction of prefetched KVs that actually appear in the next layer’s important-KV set; and  
-(2) \textbf{Critical-path I/O time}, which measures the amount of KV loading that 
+(2) \textbf{Critical path I/O time}, which measures the amount of KV loading that 
 remains exposed on the inference critical path.
 These metrics collectively show how precisely each method selects the KVs 
 that matter for the next layer and how effectively it hides I/O latency.

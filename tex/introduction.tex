@@ -92,7 +92,8 @@ Based on this insight, we propose a \techa{} method that only loads the keys fro
 %\he{a subset of keys} 
 to identify crucial KVs within the entire prefix. 
 
-\zrdnew{To address the second challenge, we leverage the observation that The sets of important tokens show substantial overlap across neighboring layers. Building on this property, we design a \technew{} mechanism that uses the important tokens identified at layer i as a prior to predict those of layer i+1. This enables the system to prefetch the next layer’s KVs during the current layer’s computation, overlapping I/O with computation and further reducing first-token latency.}
+\zrdnew{To address the second challenge, we leverage the observation that the sets of important token incices are highly similar across neighboring layers. Building on this property, we design the \technew{} mechanism, which uses the important tokens identified in the current layer to approximate those in the subsequent layer. This enables the system to prefetch the next layer’s KVs while the current layer is being computed, effectively overlapping I/O with computation and further reducing TTFT.
+}
 
 To address the third challenge, we propose \techb{} methods. 
 We employ a \techba{} technique to reorder and repack the prefix KVs stored on
