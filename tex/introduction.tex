@@ -1,7 +1,7 @@
 \section{Introduction}
 \label{intro}
 
-\IEEEPARstart{G}{enerative} large language models (LLMs), such as ChatGPT and GPT-4, are increasingly utilized in applications like chatbots~\cite{chatgpt-23, chatbotmed-23}, document summarization~\cite{summarization-23, summarization2-22}, and translation~\cite{gpt4trans-23, goodgpttrans-23} due to their powerful understanding and generation capabilities. To generate more relevant and high-quality responses, these applications often prepend context-rich prefixes to user queries before sending the entire request to the model for inference. These prefixes may include the latest news retrieved from web searches relevant to the queries~\cite{rag-nips20}, historical conversation with the user~\cite{attentionstore-atc24}, and examples of question-answer pairs~\cite{chameleon-nips23} to guide the model's output format.
+\IEEEPARstart{G}{enerative} large language models (LLMs), such as ChatGPT and GPT-4, are increasingly utilized in applications like chatbots~\cite{chatgpt-23, chatbotmed-23}, document summarization~\cite{summarization-23, summarization2-22}, and translation~\cite{gpt4trans-23, goodgpttrans-23} due to their powerful understanding and generation capabilities. To generate more relevant and high-quality responses, these applications often prepend context-rich prefixes to user queries before sending the entire requests to the model for inference. These prefixes may include the latest news retrieved from web searches relevant to the queries~\cite{rag-nips20}, historical conversation with the user~\cite{attentionstore-atc24}, and examples of question-answer pairs~\cite{chameleon-nips23} to guide the model's output format.
 
 While longer requests enhance the quality of the model's output, they also
 significantly increase response-generation latency, particularly the time to
@@ -66,7 +66,7 @@ query, which determines the importance of each token's KVs.
 % This comprehensive key loading incurs considerable I/O overhead, especially from disk-based storage, hindering TTFT reduction. Hence, there is a need for a smart approach to identify key tokens while reducing I/O overhead.
 Loading all keys from disk storage significantly impacts I/O efficiency, impeding TTFT reduction. A smarter method to identify key tokens with minimal I/O overhead is essential.
 
-\zrdnew{Second, since the important tokens of each layer are only revealed after computing that layer’s attention scores, they cannot be prefetched during the computation of the previous layer. Existing systems either ignore token importance and randomly prefetch some tokens’ KVs, which leads to low accuracy and wastes I/O bandwidth, or they require changes to model parameters, which introduces extra overhead. Hence, a more effective method is required to identify which tokens’ KVs to prefetch in order to reduce I/O on the critical path.}
+\zrdnew{Second, since the important tokens of each layer are only revealed after computing that layer’s attention scores, they cannot be prefetched during the computation of the previous layer. Existing systems either ignore token importance and randomly prefetch some tokens’ KVs, which leads to low accuracy and wastes I/O bandwidth, or they require changes to model parameters, which introduces extra overhead. Hence, a more effective method is required to identify which tokens’ KVs to prefetch in order to reduce the amount of I/O requests on the critical path.}
 % Second, existing systems tend to group together the KVs of tens of 
 % consecutive tokens into a single large object (e.g., a chunk) and manage 
 % them using caches, aiming to enhance disk I/O and PCIe transfer efficiency. However, since our system selectively reads only the important KVs, directly applying these existing storage and cache management methods is suboptimal for two main reasons. 
@@ -109,8 +109,8 @@ The main contributions of this paper are as follows:
 \item \zrdnew{We present \pname{}, the first importance-informed prefix KV prefetching and caching
 system that integrates three storage tiers: GPU memory, CPU memory and disk.}%
 \item \cp{We propose \technew{} mechanism to prefetch important KVs, effectively overlapping I/O with computation.}
-\item We introduce a similarity-guided important token identification method for efficiently locating important KVs, and complement it with \techb{}, which incorporates \techba{} and a new \techbb{} policy to further minimize I/O data movement from slower storage media.
+\item We introduce a similarity-guided important token identification method for efficiently locating important KVs, and complement it with \techb{}, which incorporates \techba{} and a new \techbb{} policy to further minimize data movement from slower storage media.
 
 
-\item We implement \pname{} and our evaluation demonstrates that it reduces TTFT by up to \zrd{1.75}$\times$ compared to the state-of-the-art prefix KV storage systems while maintaining comparable inference accuracy.
+\item We implement \pname{} and our evaluation demonstrates that it reduces TTFT by up to \zrdnew{1.75}$\times$ compared to the state-of-the-art prefix KV storage systems while maintaining comparable inference accuracy.
 \end{itemize}
