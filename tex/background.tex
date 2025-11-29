@@ -101,7 +101,7 @@ However, as summarized in Table~\ref{tab:pkv_comparison},
 existing systems optimize only a subset of these dimensions, 
 and none achieves a comprehensive solution across all aspects.}
 
-\cp{\paragraph{GPU/CPU-Memory-Only Storage}  
+\cp{\paragraph{KV stores using only GPU/CPU memory.}  
 Systems such as PromptCache~\cite{promptcache-mlsys24}, 
 SGLang~\cite{sglang-arxiv23}, 
 RAGCache~\cite{ragcache-arxiv24}, 
@@ -112,16 +112,16 @@ This design achieves low TTFT by avoiding I/O operations and typically employs c
 to further reduce latency. 
 However, GPU and CPU memory are inherently capacity-limited, 
 causing these systems to quickly exhaust available storage in RAG workloads. 
-For example, with OPT-30B in FP16, the KV cache is 1.31 MiB per token; an 8,000-token retrieved prefix consumes 11 GB, and eight concurrent sessions require 88 GB which exceeds a single 80 GB GPU like A100.}
+For example, with OPT-30B in FP16, the KV cache is 1.31 MB per token; an 8,000-token retrieved prefix consumes 11 GB, and eight concurrent sessions require 88 GB which exceeds a single 80 GB GPU like A100.}
 
-\cp{\paragraph{Hybrid CPU-and-Disk Storage}  
+\cp{\paragraph{KV stores using CPU memory and disks.}  
 To overcome the capacity constraint, 
-AttentionStore~\cite{attentionstore-atc24} stores prefix KVs across both CPU memory and disk, 
+AttentionStore~\cite{attentionstore-atc24} stores prefix KVs across both CPU memory and disks, 
 providing sufficient capacity for large-context inference. 
 However, reading data from disk is inherently slow. 
 To mitigate this issue, AttentionStore leverages layer-level parallelism by prefetching the KVs 
 for the next Transformer layer while the current layer is being computed, as shown in Figure~\ref{fig:pkvloading}(d). 
-Nevertheless, the data transfer from SSD to GPU remains too slow, 
+Nevertheless, the data transfer from SSD to GPU remains slow, 
 and the latency cannot be fully hidden by computation, 
 especially under heavy or preemptive workloads. As shown in Figure~\ref{fig:pload-bottleneck}, 
 loading prefix KVs from SSD still leads to a substantial increase in TTFT, 
@@ -129,7 +129,7 @@ as I/O latency accounts for 51\% to 98\% of the total and rarely overlaps comple
 
 	
 
-\cp{\paragraph{Importance-Aware KV Loading}  
+\cp{\paragraph{Importance-aware KV store.}  
 To mitigate the I/O bottleneck caused by loading prefix KVs from disk, IMPRESS~\cite{impress-fast25} introduces a novel approach that loads only the most important KVs to reduce I/O latency while maintaining comparable model accuracy. However, these selected KVs still lie on the critical path of model inference, as shown in Figure~\ref{fig:pkvloading}(e).
 Although prior systems employ prefetching to overlap data loading with model computation by fetching all KVs in advance, 
 this strategy fails in IMPRESS. 
