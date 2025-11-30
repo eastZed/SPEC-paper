@@ -237,13 +237,13 @@ is higher than the similarity threshold.
 
 
 
-Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disk. The number of probe heads is set to three. 
+Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disks. The number of probe heads is set to three. 
 Without it, all 32 heads must load 128 \textit{key} vectors and later 32 \(k,v\) vectors, totaling 160 vectors. 
 With \techa{}, only 12 \textit{key} vectors from three probe heads are first loaded. The GPU computes attention and measures probe-head similarity. 
 If the similarity exceeds the threshold, only one token index deemed most important by all probe heads \(\{x\}\) is used, and 64 \(k,v\) vectors are loaded and just 76 vectors in total. 
 When the threshold is unmet, the process reverts to the standard mode, though this occurs in fewer than 20\% of layers. 
 Given that modern LLMs have dozens of heads and long prefixes, \techa{} effectively reduces I/O load across most layers. 
-%Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disk. The number of probe heads is set to three. 
+%Figure~\ref{fig:woandw-techa} illustrates the process of completing a transformer layer with and without this technique. Assume the prefix contains 4 tokens, with only one being important. Each transformer layer has 32 heads and all the prefix KVs of each head are stored on disks. The number of probe heads is set to three. 
 %Without the \techa{} technique, it involves three steps: 
 %(1) loading the keys of all 32 heads (total 32 $\times$ 4 = 128 vectors) from
 %disk into the GPU memory; 
@@ -290,7 +290,7 @@ With \techa{} enabled (Figure~\ref{fig:simiload-ttft}(b)), when the similarity a
 After obtaining the important token positions, the system selectively loads only the corresponding keys and values instead of all tokens, effectively reducing I/O overhead. 
 This selective loading also shortens the time required for generating important token index sets (in green), resulting in a shorter overall TTFT.
 
-%However, as indicated by the black dashed arrows, dependencies among key loading, token selection, and value loading still limit the degree of overlap between computation and I/O, resulting in partial idle periods on the GPU stream.
+%However, as indicated by the black dashed arrows, dependencies among key loading, token selection, and value loading still limit the degree of overlap between computation and I/Os, resulting in partial idle periods on the GPU stream.
 
 
 %Figure~\ref{fig:simiload-ttft} compares the timelines for completing three transformer layers with and without this technique. 

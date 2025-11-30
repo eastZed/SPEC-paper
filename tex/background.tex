@@ -157,8 +157,8 @@ As a result, the system cannot determine in advance which KVs to prefetch, and t
 %memory and disk to provide sufficient storage space, it doesn’t fundamentally
 %reduce the load time, as the latency from disk cannot be fully hidden by
 %computation in some cases as shown in Figure~\ref{fig:pkvloading}(d).  
-%Thus, this approach may fail under heavy request loads or in preemptive scheduling scenarios, due to the bottleneck of disk I/O.
-%\zrdnew{IMPRESS~\cite{impress-fast25} proposes that loading only important KVs to reduce I/O latency while maintaining comparable accuracy. However, the identification and loading of important KVs for the next layer depend on the computation results of the current layer, which makes it impossible to prefetch them during the current layer's computation. As xxx shows, although this approach reduces the I/O volume, it fails to leverage the opportunity to parallelize I/O with computation, resulting in the I/O bandwidth being underutilized during computation.}
+%Thus, this approach may fail under heavy request loads or in preemptive scheduling scenarios, due to the bottleneck of disk I/Os.
+%\zrdnew{IMPRESS~\cite{impress-fast25} proposes that loading only important KVs to reduce I/O latency while maintaining comparable accuracy. However, the identification and loading of important KVs for the next layer depend on the computation results of the current layer, which makes it impossible to prefetch them during the current layer's computation. As xxx shows, although this approach reduces the I/O volume, it fails to leverage the opportunity to parallelize I/Os with computation, resulting in the I/O bandwidth being underutilized during computation.}
 %Figure~\ref{fig:pload-bottleneck} shows the TTFT breakdown for recalculating
 %shared prefixes versus loading and reusing prefix KVs from different storage
 %media (i.e., GPU memory, CPU memory, and SSD). We vary the number of input prefix tokens from

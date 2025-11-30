@@ -1,10 +1,10 @@
 \section{HyperInfer Design}
 \label{design_mainpart}
-\zrdnew{In this section, we present \pname{}, an importance-informed three-tier prefix KV caching and prefetching system.}
+\zrdnew{In this section, we present \pname{}, an importance-informed three-tiered prefix KV caching and prefetching system.}
 %We first introduce the system overview of SPEC and then elaborate on its three key components.}
 First, we describe the overall architecture of \pname{} (\cref{sec:overview}). 
 \zrdnew{Then, we introduce an I/O-efficient technique to identify important tokens (\cref{sec:techa}). 
-Furthermore, we propose a prefetching technique to mitigate I/O bottlenecks by overlapping computation and I/O ({\cref{sec:technew}})}.
+Furthermore, we propose a prefetching technique to mitigate I/O bottlenecks by overlapping computation and I/Os ({\cref{sec:technew}})}.
 Finally, we explain how prefix KVs are managed across three storage tiers 
 to further reduce the latency when loading them into GPU memory (\cref{sec:techb}).
 
@@ -22,13 +22,13 @@ during the prefill phase;
 \cp{(2) Since the I/Os for loading essential KVs lie on the critical path, we introduce data prefetching during model computation to mitigate the I/O overhead.}
 (3) Since loading only important KVs could degrade
 the efficiency of existing storage and caching systems, we optimize the
-three-tier prefix KV management to improve cache hit
+three-tiered prefix KV management to improve cache hit
 ratios and I/O efficiency.
 
 \cp{Figure~\ref{fig:overview} illustrates the overall architecture of \pname{}, which consists of a data plane responsible for KV storage and a control plane that governs runtime data movement and computation scheduling.
 In the data plane, all prefix key–value (KV) pairs are stored on disks in chunked form, while selected KVs are cached in either CPU or GPU memory. The two cache spaces are mutually exclusive to prevent redundancy. To mitigate I/O latency, essential KVs are prefetched during model computation to overlap data transfer with inference execution.}
 
-\cp{The control plane manages GPU inference and includes three core modules: important token filtering (\cref{sec:techa}), data prefetching (\cref{sec:techc}), and prefix KV placement (\cref{sec:techb}). The token filtering module loads only a subset of key vectors to identify important tokens, reducing disk I/O. The prefetching module proactively loads critical KVs during computation to hide I/O overhead. The KV placement module manages KV distribution across disks, CPU memory, and GPU memory to maximize cache efficiency and eliminate redundancy.}
+\cp{The control plane manages GPU inference and includes three core modules: important token filtering (\cref{sec:techa}), data prefetching (\cref{sec:technew}), and prefix KV placement (\cref{sec:techb}). The token filtering module loads only a subset of key vectors to identify important tokens, reducing disk I/Os. The prefetching module proactively loads critical KVs during computation to hide I/O overhead. The KV placement module manages KV distribution across disks, CPU memory, and GPU memory to maximize cache efficiency and eliminate redundancy.}
 
 \begin{figure}
 	\centering
@@ -45,11 +45,11 @@ $m$ is the number of tokens in the prefix and $n$ is the number of tokens in the
 $t^p$ and $t^q$ denote the prefix and non-prefix tokens, respectively. 
 First, given the request, \pname{} queries the database to find the longest common 
 prefix subsequence from all previous requests~\cite{sglang-arxiv23, chunkattention-arxiv24}. 
-Let's assume that the entire prefix $R=[t^p_0,...,t^p_{m}]$ is found in the database, and its corresponding key--value (KV) pairs are stored across GPU memory, CPU memory, or disk.
+Let's assume that the entire prefix $R=[t^p_0,...,t^p_{m}]$ is found in the database, and its corresponding key--value (KV) pairs are stored across GPU memory, CPU memory, or disks.
 Next, \pname{} identifies the important tokens within $R$, assuming $R_{important}=[t^p_{t}, t^p_{t+1}, ..., t^p_s]$ 
 ($ 0 \leq t \leq s \leq m$) is identified (\cref{sec:techa}).
 If the KVs in $R_{important}$ are not in GPU memory, they are loaded from lower memory tiers (CPU or disk) (\cref{sec:techb}).
-During this process, the system also predicts the next set of important KVs and proactively prefetches them to overlap I/O with computation, thereby further mitigating data access latency (\cref{sec:technew    }). 
+During this process, the system also predicts the next set of important KVs and proactively prefetches them to overlap I/Os with computation, thereby further mitigating data access latency (\cref{sec:technew}). 
 Both the important KVs and any incorrectly prefetched KVs are passed to the LLM for computation, whereas other KVs of unimportant tokens in $R$ are discarded and do not participate in subsequent inference. 
 Then, the loaded $R_{\text{important}}$ and the query tokens enter the LLM model, completing the remaining computations in the prefill phase. 
 The decoding phase remains unchanged, following existing systems~\cite{alluneed-nips17}.}
