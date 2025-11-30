@@ -10,11 +10,11 @@
 %further reducing TTFT. Our experiments show that \pname{} reduces TTFT by up to
 %2.8$\times$ compared to state-of-the-art systems, while maintaining comparable
 %inference accuracy.
-\zrdnew{Existing prefix KV reuse systems do not always reduce TTFT, especially when disk
+\zrdnew{Existing prefix KV storage systems do not always reduce TTFT, especially when disk
 	I/O latency becomes a bottleneck in large-scale LLM services. 
-	We propose \pname{}, an importance-informed three-tier prefix KV caching and prefetching system 
+	We propose \pname{}, an importance-informed three-tiered prefix KV caching and prefetching system 
 	that minimizes I/O delay by selectively loading and prefetching important KVs. 
-	First, we introduce the I/O-efficient \techa{} algorithm to identify important KVs with minimal data movement. 
+	First, we introduce the I/O-efficient \techa{} algorithm to identify important KVs with minimum data movement. 
 	Then, we propose \technew{}, which employs cross-layer prefetching to overlap I/O with computation 
 	and further reduce disk traffic. 
 	Finally, we propose \techb{} to optimize storage and caching,
